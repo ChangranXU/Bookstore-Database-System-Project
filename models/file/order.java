@@ -28,8 +28,8 @@ public class order implements FileInputDBInterface {
         order_details.insertToDBbyDB(conn);
 
         //order db
-        orderDB order = new orderDB(oid, uid, item_quantity,isbn);
-        order.insertToDBbyDB(conn);
+        orderDB orderdb = new orderDB(oid, uid, item_quantity,isbn);
+        orderdb.insertToDBbyDB(conn);
     }
 
     

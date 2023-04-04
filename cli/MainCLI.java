@@ -38,6 +38,7 @@ public class MainCLI implements CLIInterface{
         System.out.println("+System Date: "+dtf.format(now));  
         System.out.printf("+Database Records: ");
         db.countAndPrintAllRecordsInTables();
+        System.out.println();
         System.out.println("——————————————————————————");
         System.out.println(">1. Database Operation");
         System.out.println(">2. Customer Operation");

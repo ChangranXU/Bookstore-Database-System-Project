@@ -45,7 +45,7 @@ public class DatabaseCLI implements CLIInterface {
             if (e.toString().contains("exists")) {
                 System.out.println("[Error] Tables already created.\n");
             } else {
-                System.out.println("[Error] Failed to create tables.\n");
+                System.out.println("[Error] Cannot create tables.\n");
             }
         }
     }
@@ -58,7 +58,7 @@ public class DatabaseCLI implements CLIInterface {
             if (e.toString().contains("Unknown")) {
                 System.out.println("[Error] Tables do not exist.\n");
             } else {
-                System.out.println("[Error] Failed to delete tables.\n");
+                System.out.println("[Error] Cannot delete tables.\n");
             }
         }
     }

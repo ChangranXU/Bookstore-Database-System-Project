@@ -16,7 +16,7 @@ public class orderDB {
 
     public void insertToDBbyDB(Connection conn){
         try {
-            String sql = "INSERT INTO order (oid, uid, item_quantity, isbn) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO `order` (oid, uid, item_quantity, isbn) VALUES (?, ?, ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, oid);
             pstmt.setString(2, uid);

@@ -29,7 +29,10 @@ public class Database {
                 ResultSet rs = stmt.executeQuery();
                 rs.next();
                 int count = rs.getInt(1);
-                System.out.println(tableNames[i] + ": " + count);
+                System.out.printf(tableNames[i] + ": " + count);
+                if(i!=tableNames.length-1){
+                    System.out.printf(", ");
+                }
             } catch (SQLException e) {
                 System.out.println("[Error] No such table or tables are not initialized yet.");
             }
@@ -48,26 +51,30 @@ public class Database {
             conn.prepareStatement("CREATE TABLE author (isbn VARCHAR(45) NOT NULL, author_name VARCHAR(45) NOT NULL, PRIMARY KEY (isbn, author_name))"),
             conn.prepareStatement("CREATE TABLE order_details (oid VARCHAR(45) NOT NULL, order_time TIMESTAMP NOT NULL, order_quantity int NOT NULL, shipping_status VARCHAR(45) NOT NULL, PRIMARY KEY (oid))"),
             conn.prepareStatement("CREATE TABLE buy (uid VARCHAR(45) NOT NULL, isbn VARCHAR(45) NOT NULL, item_quantity int NOT NULL, PRIMARY KEY (uid, isbn, item_quantity))"),
-            conn.prepareStatement("CREATE TABLE order (uid VARCHAR(45) NOT NULL, oid VARCHAR(45) NOT NULL, item_quantity int NOT NULL, isbn  VARCHAR(45) NOT NULL, PRIMARY KEY (uid, oid,item_quantity,isbn))")
+            conn.prepareStatement("CREATE TABLE `order` (oid VARCHAR(45) NOT NULL, uid VARCHAR(45) NOT NULL, item_quantity int NOT NULL, isbn  VARCHAR(45) NOT NULL, PRIMARY KEY (oid, uid,item_quantity,isbn))")
         };
         for (int i = 0; i < stmts.length; i++) {
             stmts[i].execute();
+            System.out.println("Table " + tableNames[i] + " created.");
         }
     } 
 
     //delete tables
     public void deleteAllTables() throws SQLException{
         PreparedStatement[] stmts={
+            //conn.prepareStatement("SET FOREIGN_KEY_CHECKS=0"),
+
             conn.prepareStatement("DROP TABLE customer"),
             conn.prepareStatement("DROP TABLE book"),
             //conn.prepareStatement("DROP TABLE item"),
             conn.prepareStatement("DROP TABLE author"),
             conn.prepareStatement("DROP TABLE order_details"),
             conn.prepareStatement("DROP TABLE buy"),
-            conn.prepareStatement("DROP TABLE order")
+            conn.prepareStatement("DROP TABLE `order`")
         };
         for (int i = 0; i < stmts.length; i++) {
             stmts[i].execute();
+            System.out.println("Table " + tableNames[i] + " deleted.");
         }
     }
 
@@ -83,7 +90,7 @@ public class Database {
         BufferedReader br = new BufferedReader(new FileReader(filePath));
         String line;
         while ((line = br.readLine()) != null) {
-            FileInputDBInterface file= (FileInputDBInterface) type.getDeclaredConstructor().newInstance(type);
+            FileInputDBInterface file= (FileInputDBInterface) type.newInstance();
             file.parseFromLine(line);
             file.insertToDB(conn);
             line=br.readLine();
