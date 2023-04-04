@@ -25,7 +25,12 @@ public class Database {
     public void countAndPrintAllRecordsInTables() {
         for (int i = 0; i < tableNames.length; i++) {
             try {
-                PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(*) FROM " + tableNames[i]);
+                PreparedStatement stmt;
+                if(tableNames[i].equals("order")){
+                    stmt = conn.prepareStatement("SELECT COUNT(*) FROM `order`");
+                }
+                else
+                    stmt = conn.prepareStatement("SELECT COUNT(*) FROM " + tableNames[i]);
                 ResultSet rs = stmt.executeQuery();
                 rs.next();
                 int count = rs.getInt(1);
@@ -51,7 +56,7 @@ public class Database {
             conn.prepareStatement("CREATE TABLE author (isbn VARCHAR(45) NOT NULL, author_name VARCHAR(45) NOT NULL, PRIMARY KEY (isbn, author_name))"),
             conn.prepareStatement("CREATE TABLE order_details (oid VARCHAR(45) NOT NULL, order_time TIMESTAMP NOT NULL, order_quantity int NOT NULL, shipping_status VARCHAR(45) NOT NULL, PRIMARY KEY (oid))"),
             conn.prepareStatement("CREATE TABLE buy (uid VARCHAR(45) NOT NULL, isbn VARCHAR(45) NOT NULL, item_quantity int NOT NULL, PRIMARY KEY (uid, isbn, item_quantity))"),
-            conn.prepareStatement("CREATE TABLE `order` (oid VARCHAR(45) NOT NULL, uid VARCHAR(45) NOT NULL, item_quantity int NOT NULL, isbn  VARCHAR(45) NOT NULL, PRIMARY KEY (oid, uid,item_quantity,isbn))")
+            conn.prepareStatement("CREATE TABLE `order` (oid VARCHAR(45) NOT NULL, uid VARCHAR(45) NOT NULL, item_quantity int NOT NULL, isbn VARCHAR(45) NOT NULL, PRIMARY KEY (oid, uid, item_quantity, isbn))")
         };
         for (int i = 0; i < stmts.length; i++) {
             stmts[i].execute();
@@ -88,14 +93,15 @@ public class Database {
     private void InputDB(Class<?> type, String filePath) {
         try{
         BufferedReader br = new BufferedReader(new FileReader(filePath));
-        String line;
-        while ((line = br.readLine()) != null) {
+        String line = br.readLine();
+        while (line != null) {
             FileInputDBInterface file= (FileInputDBInterface) type.newInstance();
             file.parseFromLine(line);
             file.insertToDB(conn);
             line=br.readLine();
         }
-        br.close();}
+        br.close();
+    }
         catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -135,7 +141,7 @@ public class Database {
 
             //add order record
             for(int i=0;i<ISBNList.size();i++){
-                stmt=conn.prepareStatement("INSERT INTO order ( oid, uid,item_quantity, isbn) VALUES (?, ?, ?, ?)");
+                stmt=conn.prepareStatement("INSERT INTO `order` ( oid, uid,item_quantity, isbn) VALUES (?, ?, ?, ?)");
                 stmt.setString(1, orderID);
                 stmt.setString(2, userID);
                 stmt.setInt(3, item_quantity.get(i));
@@ -153,7 +159,7 @@ public class Database {
     public void printHistoryOrders(String userID){
         try {
             //no record
-            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM order_details WHERE oid in (SELECT DISTINCT oid FROM order WHERE uid =?)");
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM order_details WHERE oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet num = stmt.executeQuery();
             num.next();
@@ -178,7 +184,7 @@ public class Database {
                 rs2.next();
                 Timestamp order_date = rs2.getTimestamp(1);
                 String shipping_status = rs2.getString(2);
-                stmt = conn.prepareStatement("SELECT isbn, item_quantity FROM order WHERE oid = ?");
+                stmt = conn.prepareStatement("SELECT isbn, item_quantity FROM `order` WHERE oid = ?");
                 stmt.setString(1, oid);
                 ResultSet rs3 = stmt.executeQuery();
                 while(rs3.next()){
@@ -327,7 +333,7 @@ public class Database {
 
         try {
             //no record
-            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM order_details WHERE shipping_status = 'Ordered' AND oid in (SELECT DISTINCT oid FROM order WHERE uid =?)");
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM order_details WHERE shipping_status = 'Ordered' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet num = stmt.executeQuery();
             num.next();
@@ -341,7 +347,7 @@ public class Database {
 
             System.out.println("Ordered Order Record:");
             System.out.println("|oid|Order Quantity|Order Date|");
-            stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE shipping_status = 'Shipped' AND oid in (SELECT DISTINCT oid FROM order WHERE uid =?)");
+            stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE shipping_status = 'Shipped' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet rs = stmt.executeQuery();
 
@@ -371,7 +377,7 @@ public class Database {
 
         try {
             //no record
-            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM order_details WHERE shipping_status = 'Shipped' AND oid in (SELECT DISTINCT oid FROM order WHERE uid =?)");
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM order_details WHERE shipping_status = 'Shipped' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet num = stmt.executeQuery();
             num.next();
@@ -385,7 +391,7 @@ public class Database {
 
             System.out.println("Ordered Shipped Record:");
             System.out.println("|oid|Order Quantity|Order Time|");
-            stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE shipping_status = 'Shipped' AND oid in (SELECT DISTINCT oid FROM order WHERE uid =?)");
+            stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE shipping_status = 'Shipped' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet rs = stmt.executeQuery();
 
@@ -415,7 +421,7 @@ public class Database {
 
         try {
             //no record
-            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM order_details WHERE shipping_status = 'Received' AND oid in (SELECT DISTINCT oid FROM order WHERE uid =?)");
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM order_details WHERE shipping_status = 'Received' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet num = stmt.executeQuery();
             num.next();
@@ -429,7 +435,7 @@ public class Database {
 
             System.out.println("Ordered Received Record:");
             System.out.println("|oid|Order Quantity|Order Time|");
-            stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE shipping_status = 'Received' AND oid in (SELECT DISTINCT oid FROM order WHERE uid =?)");
+            stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE shipping_status = 'Received' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet rs = stmt.executeQuery();
 
@@ -515,7 +521,7 @@ public class Database {
 
     public void optOrderUpdate(String oid){
         try{
-            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM order WHERE oid=?");
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM `order` WHERE oid=?");
             stmt.setString(1,oid);
             ResultSet num = stmt.executeQuery();
             num.next();
