@@ -15,4 +15,3 @@ make run
 ## Cleaning up the compiled files
 
 make clean
-```
