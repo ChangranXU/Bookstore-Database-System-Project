@@ -6,11 +6,7 @@ This is a library inquiry system implemented in Java, using JDBC for MySQL conne
 
 Run:  make
 
-<<<<<<< HEAD
-## Running the program
-=======
 ##Running the program
->>>>>>> 0718fc48d55c668c37985f17939c0544b6e59f9d
 
 Run:  make run
 
@@ -18,9 +14,6 @@ Run:  make run
 
 ## Cleaning up the compiled files
 
-<<<<<<< HEAD
 Run:  make clean
 
-=======
-make clean
->>>>>>> 0718fc48d55c668c37985f17939c0544b6e59f9d
+![image](https://github.com/ChangranXU/bookstore_database_project/blob/main/phase1_update/IMG_1113.jpg)
