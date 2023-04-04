@@ -68,7 +68,6 @@ public class DatabaseCLI implements CLIInterface {
         String folderPath = sc.next();
         try {
             db.loadDataFromFiles(folderPath);
-            System.out.println("Done! Data has been inputted to the tables!\n");
         } catch (Exception e) {
             System.out.println("[Error] Cannot load data from file.\n");
         }

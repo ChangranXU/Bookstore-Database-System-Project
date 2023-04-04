@@ -14,14 +14,14 @@ public class customerDB {
 
     public void insertToDBbyDB(Connection conn){
         try{
-            String sql = "INSERT INTO customer VALUES(?, ?, ?)";
+            String sql = "REPLACE INTO customer VALUES(?, ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, uid);
             pstmt.setString(2, name);
             pstmt.setString(3, address);
             pstmt.executeUpdate();
         }catch(SQLException e){
-            System.out.println(e.getMessage());
+            System.out.println("[Error]"+e.getMessage());
         }
     }
     

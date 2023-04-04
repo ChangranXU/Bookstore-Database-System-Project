@@ -16,7 +16,7 @@ public class orderDB {
 
     public void insertToDBbyDB(Connection conn){
         try {
-            String sql = "INSERT INTO `order` (oid, uid, item_quantity, isbn) VALUES (?, ?, ?, ?)";
+            String sql = "REPLACE INTO `order` (oid, uid, item_quantity, isbn) VALUES (?, ?, ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, oid);
             pstmt.setString(2, uid);
@@ -24,7 +24,7 @@ public class orderDB {
             pstmt.setString(4, isbn);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("[Error]"+e.getMessage());
         }
     }
     

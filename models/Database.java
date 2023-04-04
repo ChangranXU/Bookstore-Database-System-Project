@@ -39,7 +39,7 @@ public class Database {
                     System.out.printf(", ");
                 }
             } catch (SQLException e) {
-                System.out.println("[Error] No such table or tables are not initialized yet.");
+                System.out.printf(" [Error] No such table or tables are not initialized yet.");
             }
         }
         System.out.println();
@@ -103,7 +103,7 @@ public class Database {
         br.close();
     }
         catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("[Error]"+e.getMessage());
         }
     }
 
@@ -152,7 +152,7 @@ public class Database {
             System.out.println("Order placed successfully.");
         }
         catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("[Error]"+e.getMessage());
         }
     }
 
@@ -200,7 +200,7 @@ public class Database {
             }
         }
         catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("[Error]"+e.getMessage());
         }
     }
 
@@ -243,7 +243,7 @@ public class Database {
             System.out.println("|"+price+"|"+inventory_quantity+"|");
         }
         catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("[Error]"+e.getMessage());
         }
     }
 
@@ -287,7 +287,7 @@ public class Database {
             }
         }
         catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("[Error]"+e.getMessage());
         }
     }
 
@@ -324,7 +324,7 @@ public class Database {
             }
         }
         catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("[Error]"+e.getMessage());
         }
     }
 

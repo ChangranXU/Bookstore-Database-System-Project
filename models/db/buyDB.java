@@ -14,14 +14,14 @@ public class buyDB {
 
     public void insertToDBbyDB(Connection conn){
         try {
-            String sql = "INSERT INTO buy (uid, isbn, item_quantity) VALUES (?, ?, ?)";
+            String sql = "REPLACE INTO buy (uid, isbn, item_quantity) VALUES (?, ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, uid);
             pstmt.setString(2, isbn);
             pstmt.setInt(3, item_quantity);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("[Error]"+e.getMessage());
         }
     }
     

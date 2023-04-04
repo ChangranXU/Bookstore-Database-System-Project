@@ -12,13 +12,13 @@ public class authorDB {
     
     public void insertToDBbyDB(Connection conn){
         try{
-            String sql = "INSERT INTO author(author_name,isbn) VALUES(?,?)";
+            String sql = "REPLACE INTO author(author_name,isbn) VALUES(?,?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, author_name);
             pstmt.setString(2, isbn);
             pstmt.executeUpdate();
         }catch(SQLException e){
-            System.out.println(e.getMessage());
+            System.out.println("[Error]"+e.getMessage());
         }
     }
 }

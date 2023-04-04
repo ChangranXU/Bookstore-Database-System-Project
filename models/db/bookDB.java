@@ -17,7 +17,7 @@ public class bookDB {
 
     public void insertToDBbyDB(Connection conn){
         try {
-            String sql = "INSERT INTO book (isbn, title, price, inventory_quantity) VALUES (?, ?, ?, ?)";
+            String sql = "REPLACE INTO book (isbn, title, price, inventory_quantity) VALUES (?, ?, ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, isbn);
             pstmt.setString(2, title);
@@ -25,7 +25,7 @@ public class bookDB {
             pstmt.setInt(4, inventory_quantity);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("[Error]"+e.getMessage());
         }
     }
     

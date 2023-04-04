@@ -12,13 +12,13 @@ public class itemDB {
 
     public void insertToDBbyDB(Connection conn){
         try {
-            String sql = "INSERT INTO item (isbn, item_quantity) VALUES (?, ?)";
+            String sql = "REPLACE INTO item (isbn, item_quantity) VALUES (?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, isbn);
             pstmt.setInt(2, item_quantity);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("[Error]"+e.getMessage());
         }
     }
     
