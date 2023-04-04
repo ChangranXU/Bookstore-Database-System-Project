@@ -2,11 +2,11 @@
 
 This is a bookstore system implemented in Java, using JDBC for MySQL connection.
 
-#Compilation
+##Compilation
 
 make
 
-#Running the program
+##Running the program
 
 make run
 
