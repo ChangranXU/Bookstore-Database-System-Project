@@ -1,18 +1,18 @@
-# CSCI3170 Introduction to Database Systems Project
+# CSCI3170 Introduction to Database Systems Project -- Library Inquiry System
 
-This is a bookstore system implemented in Java, using JDBC for MySQL connection.
+This is a library inquiry system implemented in Java, using JDBC for MySQL connection.
 
-#Compilation
+##Compilation
 
-make
+Run:  make
 
-#Running the program
+## Running the program
 
-make run
+Run:  make run
 
-(CUHK CSE VPN connection is required)
+(CUHK CSE VPN connection is required to run the project.)
 
 ## Cleaning up the compiled files
 
-make clean
-```
+Run:  make clean
+
