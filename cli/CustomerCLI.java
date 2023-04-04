@@ -71,12 +71,23 @@ public class CustomerCLI implements CLIInterface {
         ArrayList<Integer> item_quantity=new ArrayList<Integer>();
         while(flag==0){
         System.out.printf("Enter The Book ISBN You Like Order: ");
-        ISBNList.add(sc.next());
+        String isbn=sc.next();
         System.out.printf("Enter The Quantity of Books You Like Order: ");
-        item_quantity.add(sc.nextInt());
+        int quantity=sc.nextInt();
+        if(!db.testISBN(isbn)){
+            System.out.println("The ISBN You Entered Is Not Exist!");
+            continue;
+        }
+        if(!db.testQuantity(isbn,quantity)){
+            System.out.println("We have not enough book!");
+            db.printQuantity(isbn);
+            continue;
+        }
+        ISBNList.add(isbn);
+        item_quantity.add(quantity);
         System.out.printf("Do You Want To Add Another ISBN? (Y/N): ");
         String choice=sc.next();
-        if(choice.equals("N")){
+        if(choice.equals("N")||choice.equals("n")){
             flag=1;}
         }
         db.placeOrder(userID,orderID,ISBNList,item_quantity);

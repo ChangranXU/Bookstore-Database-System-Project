@@ -39,7 +39,7 @@ public class Database {
                     System.out.printf(", ");
                 }
             } catch (SQLException e) {
-                System.out.printf(" [Error] No such table or tables are not initialized yet.");
+                System.out.println(" [Error] No such table or tables are not initialized yet.");
             }
         }
         System.out.println();
@@ -108,6 +108,61 @@ public class Database {
     }
 
     // ======Customer Operations ======//
+    public boolean testISBN(String ISBN){
+        try{
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM book WHERE isbn = ?");
+            stmt.setString(1, ISBN);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        catch (SQLException e) {
+            System.out.println(" [Error] No such table or tables are not initialized yet.");
+            return false;
+        }
+    }
+
+    public boolean testQuantity(String ISBN, int quantity){
+        try{
+            PreparedStatement stmt = conn.prepareStatement("SELECT inventory_quantity FROM book WHERE isbn = ?");
+            stmt.setString(1, ISBN);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                if(rs.getInt("inventory_quantity")>=quantity){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else{
+                return false;
+            }
+        }
+        catch (SQLException e) {
+            System.out.println(" [Error] No such table or tables are not initialized yet.");
+            return false;
+        }
+    }
+
+    public void printQuantity(String isbn){
+        try{
+            PreparedStatement stmt = conn.prepareStatement("SELECT inventory_quantity FROM book WHERE isbn = ?");
+            stmt.setString(1, isbn);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                System.out.println("What we can provide most is "+rs.getInt("inventory_quantity"+" books"));
+            }
+        }
+        catch (SQLException e) {
+            System.out.println(" [Error] No such table or tables are not initialized yet.");
+        }
+    }
+
     public void placeOrder(String userID, String orderID, ArrayList<String> ISBNList,ArrayList<Integer>item_quantity){
         try{
             //insert into order_details
