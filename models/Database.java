@@ -116,6 +116,19 @@ public class Database {
         }
     }
     // ======Customer Operations ======//
+    public void createUser(String userID,String userName,String userAddress){
+        try{
+            PreparedStatement stmt = conn.prepareStatement("INSERT INTO customer VALUES (?,?,?)");
+            stmt.setString(1, userID);
+            stmt.setString(2, userName);
+            stmt.setString(3, userAddress);
+            stmt.executeUpdate();
+            System.out.println("User " + userID + " created.");
+        }catch (SQLException e) {
+            System.out.println(" [Error] " + e.getMessage());
+        }
+    }
+
     public void listAllBooks() throws SQLException{
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM book");
         ResultSet rs = stmt.executeQuery();
