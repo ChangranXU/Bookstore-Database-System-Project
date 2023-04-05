@@ -15,7 +15,6 @@ public class Database {
     final String[] tableNames = {"customer", "book", "author", "order_details", "buy","order"};
 
     private Connection conn = null;
-    private Random random = new Random();
 
     public void connect() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.cj.jdbc.Driver");
@@ -116,6 +115,22 @@ public class Database {
         }
     }
     // ======Customer Operations ======//
+    public boolean CreateverifyUser(String uid){
+        try{
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(uid) FROM buy WHERE uid=?");
+            stmt.setString(1,uid);
+            ResultSet num = stmt.executeQuery();
+            num.next();
+            int count = num.getInt(1);
+            if(count==0) {
+                return false;
+             }
+            return true;
+        } catch (SQLException e) {
+            System.out.println("[Error] "+e.getMessage());
+            return false;
+        }
+    }
     public void createUser(String userID,String userName,String userAddress){
         try{
             PreparedStatement stmt = conn.prepareStatement("INSERT INTO customer VALUES (?,?,?)");

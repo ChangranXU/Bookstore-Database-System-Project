@@ -31,7 +31,7 @@ public class CustomerCLI implements CLIInterface {
     private void optCreateUser(){
         System.out.printf("Enter the User ID: ");
         String userID = sc.next();
-        while(db.verifyUser(userID) == true){
+        while(db.CreateverifyUser(userID) == true){
             System.out.println("[Error] Sorry the ID has already been occupied. Use a different name and try again.");
             System.out.println("Want to go back to the customer operation menu? (y/n) ");
             String choice = sc.next();
@@ -47,8 +47,6 @@ public class CustomerCLI implements CLIInterface {
         String userName = sc.next();
         System.out.printf("Enter the User Address: ");
         String userAddress = sc.next();
-        System.out.printf("Enter the User Phone Number: ");
-        String userPhoneNumber = sc.next();
         db.createUser(userID, userName, userAddress);
     }
 
