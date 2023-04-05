@@ -117,7 +117,7 @@ public class Database {
     // ======Customer Operations ======//
     public boolean CreateverifyUser(String uid){
         try{
-            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(uid) FROM buy WHERE uid=?");
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(uid) FROM customer WHERE uid=?");
             stmt.setString(1,uid);
             ResultSet num = stmt.executeQuery();
             num.next();
@@ -455,7 +455,6 @@ public class Database {
             }
 
             //print book record
-            System.out.println("|ISBN|Title|Author|Price|Inventory Quantity|");
             stmt = conn.prepareStatement("SELECT isbn FROM book WHERE title Like '%" + title + "%'");
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
@@ -483,7 +482,6 @@ public class Database {
             }
 
             //print book record
-            System.out.println("|ISBN|Title|Author|Price|Inventory Quantity|");
             stmt = conn.prepareStatement("SELECT DISTINCT(isbn) FROM author WHERE author_name LIKE '%" + author + "%'");
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
@@ -689,7 +687,7 @@ public class Database {
 
     public boolean verifyUser(String uid){
         try{
-            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(uid) FROM buy WHERE uid=?");
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(uid) FROM customer WHERE uid=?");
             stmt.setString(1,uid);
             ResultSet num = stmt.executeQuery();
             num.next();
