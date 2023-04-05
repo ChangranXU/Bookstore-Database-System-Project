@@ -15,8 +15,14 @@ public class CustomerCLI implements CLIInterface {
     public void startCLI() {
         while (true) {
             printMenu();
-            int choice = sc.nextInt();
+            //check if the input is a positive integer
+            String choice_ = sc.next();
+            if(!models.utils.verifyInput.isPositiveInteger(choice_)){
+                System.out.println("[Error] Invalid operation, choose again.\n");
+                continue;
+            }
             System.out.println();
+            int choice=Integer.parseInt(choice_);
             switch (choice) {
                 case 1: optBookSearch(); break;
                 case 2: optPlaceOrder(); break;
@@ -64,7 +70,13 @@ public class CustomerCLI implements CLIInterface {
     private void optBookSearch() {
         while(true){
         printSubMenu1();
-        int choice = sc.nextInt();
+        //check if the input is a positive integer
+        String choice_ = sc.next();
+        if(!models.utils.verifyInput.isPositiveInteger(choice_)){
+            System.out.println("[Error] Invalid operation, choose again.\n");
+            continue;
+        }
+        int choice=Integer.parseInt(choice_);
         System.out.println();
             switch (choice) {
                 case 1: optSearchByISBN(); break;

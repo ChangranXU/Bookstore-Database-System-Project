@@ -16,8 +16,14 @@ public class DatabaseCLI implements CLIInterface {
     public void startCLI() {
         while (true) {
             printMenu();
-            int choice = sc.nextInt();
+            //check if the input is a positive integer
+            String choice_ = sc.next();
+            if(!models.utils.verifyInput.isPositiveInteger(choice_)){
+                System.out.println("[Error] Invalid operation, choose again.\n");
+                continue;
+            }
             System.out.println();
+            int choice=Integer.parseInt(choice_);
             switch (choice) {
                 case 1: optCreateAllTables(); break;
                 case 2: optDeleteAllTables(); break;

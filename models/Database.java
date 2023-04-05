@@ -4,6 +4,8 @@ import java.sql.*;
 import java.io.*;
 import java.util.*;
 import java.util.UUID;
+import models.utils.verifyInput;
+
 
 import models.file.*;
 
@@ -15,6 +17,7 @@ public class Database {
     final String[] tableNames = {"customer", "book", "author", "order_details", "buy","order"};
 
     private Connection conn = null;
+    //private verifyInput verify = new verifyInput();
 
     public void connect() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.cj.jdbc.Driver");
@@ -174,8 +177,20 @@ public class Database {
             if(isbn.equals("0")){
                 break;
             }
+            if(!verifyInput.isISBN(isbn)){
+                System.out.println("Invalid ISBN, order failed.");
+                break;
+            }
+            System.out.println("Got it, the book is:");
+            printBookByISBN(isbn);
             System.out.printf("Enter The Quantity You Like Order. Tpye '0' to finish: ");
-            int quantity = sc.nextInt();
+            //check if the input is a positive integer
+            String choice_ = sc.next();
+            if(!verifyInput.isPositiveInteger(choice_)){
+                System.out.println("[Error] Invalid operation, input valid value again.\n");
+                continue;
+            }
+            int quantity = Integer.parseInt(choice_);
             if(quantity==0){
                 break;
             }
