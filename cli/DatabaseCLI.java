@@ -64,10 +64,11 @@ public class DatabaseCLI implements CLIInterface {
     }
 
     private void optLoadFromDatafile() {
-        System.out.printf("Type in the path of the file you want to import: ");
+        System.out.printf("Type in the path of the file you want to import. You can type given_data if you downloaded the whole project. ");
         String folderPath = sc.next();
         try {
             db.loadDataFromFiles(folderPath);
+            System.out.println("Done! Data has been loaded from file!\n");
         } catch (Exception e) {
             System.out.println("[Error] Cannot load data from file.\n");
         }

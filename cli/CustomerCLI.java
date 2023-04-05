@@ -33,7 +33,7 @@ public class CustomerCLI implements CLIInterface {
         System.out.println(">2. Place Order");
         System.out.println(">3. Check History Orders");
         System.out.println(">4. Back to the main menu");
-        System.out.printf("Please Enter Your Query: ");
+        System.out.printf("Please Enter Your Query. ");
     }
 
     private void optBookSearch() {
@@ -62,50 +62,31 @@ public class CustomerCLI implements CLIInterface {
 
 
     private void optPlaceOrder(){
-        System.out.printf("Enter The User ID: ");
+        System.out.printf("Enter your User ID: ");
         String userID = sc.next();
-        System.out.printf("Enter The Order ID You Like: ");
-        String orderID = sc.next();
-        int flag=0;
-        ArrayList<String> ISBNList=new ArrayList<String>();
-        ArrayList<Integer> item_quantity=new ArrayList<Integer>();
-        while(flag==0){
-        System.out.printf("Enter The Book ISBN You Like Order: ");
-        String isbn=sc.next();
-        System.out.printf("Enter The Quantity of Books You Like Order: ");
-        int quantity=sc.nextInt();
-        if(!db.testISBN(isbn)){
-            System.out.println("The ISBN You Entered Is Not Exist!");
-            continue;
+        if(db.verifyUser(userID) == false){
+            System.out.println("[Error] uid does not exist, return to the customer operation menu.");
+            return;
         }
-        if(!db.testQuantity(isbn,quantity)){
-            System.out.println("We have not enough book!");
-            db.printQuantity(isbn);
-            continue;
-        }
-        ISBNList.add(isbn);
-        item_quantity.add(quantity);
-        System.out.printf("Do You Want To Add Another ISBN? (Y/N): ");
-        String choice=sc.next();
-        if(choice.equals("N")||choice.equals("n")){
-            flag=1;}
-        }
-        db.placeOrder(userID,orderID,ISBNList,item_quantity);
-        System.out.println("-----------------------");
+        db.placeOrder(userID, sc);
     }
 
     private void optCheckHistoryOrders(){
         System.out.printf("Enter The User ID: ");
         String userID = sc.next();
-        System.out.println("-----History Orders-----");
+        if(db.verifyUser(userID) == false){
+            System.out.println("[Error] login failed, return to the customer operation menu.");
+            return;
+        }
+        System.out.println("--------History Orders--------");
         db.printHistoryOrders(userID);
-        System.out.println("-----------------------");
+        System.out.println("------------------------------");
     }
 
     private void optSearchByISBN(){
         System.out.printf("Enter The Book ISBN: ");
         String isbn = sc.next();
-        System.out.println("-----Book List-----");
+        System.out.println("-------book list-------");
         db.printBookListByISBN(isbn);
         System.out.println("-----------------------");
     }
@@ -113,15 +94,15 @@ public class CustomerCLI implements CLIInterface {
     private void optSearchByTitle(){
         System.out.printf("Enter The Book Title: ");
         String title = sc.next();
-        System.out.println("-----Book List-----");
-        db.printBookListByTitle(title);
+        System.out.println("-------book list-------");
+        db.searchBookListByTitle(title);
         System.out.println("-----------------------");
     }
 
     private void optSearchByAuthor(){
         System.out.printf("Enter The Book Author: ");
         String author = sc.next();
-        System.out.println("-----Book List-----");
+        System.out.println("--------book list-------");
         db.printBookListByAuthor(author);
         System.out.println("-----------------------");
     }

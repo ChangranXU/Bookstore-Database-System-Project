@@ -15,6 +15,14 @@ public class MainCLI implements CLIInterface{
     }
 
     public void startCLI() {
+        // System.out.println("Welcome to the Bookstore System! initializing database...");
+        // try{
+        //     db.deleteAllTables();
+        //     db.createAllTables();
+        //     System.out.println("Database initialized successfully!");
+        // }catch(Exception e){
+        //     System.out.println("[Error]"+e.getMessage());
+        // }
         while (true) {
             printMainMenu();
             int choice = sc.nextInt();
@@ -34,11 +42,13 @@ public class MainCLI implements CLIInterface{
 
     private void printMainMenu() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");  
-        LocalDateTime now = LocalDateTime.now();  
+        LocalDateTime now = LocalDateTime.now();
         System.out.println("+System Date: "+dtf.format(now));  
         System.out.printf("+Database Records: ");
+        //System.out.println();
+        //try{db.listUsers();}catch(Exception e){System.out.println("[Error]"+e.getMessage());}
         db.countAndPrintAllRecordsInTables();
-        System.out.println();
+        System.out.println("If there are no records, please initialize the database first.");
         System.out.println("——————————————————————————");
         System.out.println(">1. Database Operation");
         System.out.println(">2. Customer Operation");
