@@ -120,11 +120,16 @@ public class Database {
             PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(uid) FROM customer WHERE uid=?");
             stmt.setString(1,uid);
             ResultSet num = stmt.executeQuery();
-            num.next();
-            int count = num.getInt(1);
+            int count;
+            if(num.next()){
+            count = num.getInt(1);
+            }
+            else{
+                return false;
+            }
             if(count==0) {
                 return false;
-             }
+            }
             return true;
         } catch (SQLException e) {
             System.out.println("[Error] "+e.getMessage());
@@ -360,8 +365,16 @@ public class Database {
             //no record
             PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(isbn) FROM book WHERE isbn Like '%" + isbn + "%'");
             ResultSet num = stmt.executeQuery();
-            num.next();
-            int count = num.getInt(1);
+            int count;
+            if(num.next()){
+            count = num.getInt(1);
+            }
+            else{
+                System.out.println("|                             |");
+                System.out.println("     No book record found.");
+                System.out.println("|                             |");
+                return;
+            }
             if(count==0) {
                 System.out.println("|                             |");
                 System.out.println("     No book record found.");
@@ -403,8 +416,16 @@ public class Database {
             PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(isbn) FROM book WHERE isbn = ?");
             stmt.setString(1, ISBN);
             ResultSet num = stmt.executeQuery();
-            num.next();
-            int count = num.getInt(1);
+            int count;
+            if(num.next()){
+            count = num.getInt(1);
+            }
+            else{
+                System.out.println("|                             |");
+                System.out.println("     No book record found.");
+                System.out.println("|                             |");
+                return;
+            }
             if(count==0) {
                 System.out.println("|                             |");
                 System.out.println("     No book record found.");
@@ -445,8 +466,16 @@ public class Database {
             //no record
             PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(isbn) FROM book WHERE title Like '%" + title + "%'");
             ResultSet num = stmt.executeQuery();
-            num.next();
-            int count = num.getInt(1);
+            int count;
+            if(num.next()){
+            count = num.getInt(1);
+            }
+            else{
+                System.out.println("|                             |");
+                System.out.println("     No book record found.");
+                System.out.println("|                             |");
+                return;
+            }
             if(count==0) {
                 System.out.println("|                             |");
                 System.out.println("     No book record found.");
@@ -472,8 +501,16 @@ public class Database {
             //no record
             PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(isbn) FROM author WHERE author_name LIKE '%" + author + "%'");
             ResultSet num = stmt.executeQuery();
-            num.next();
-            int count = num.getInt(1);
+            int count;
+            if(num.next()){
+            count = num.getInt(1);
+            }
+            else{
+                System.out.println("|                             |");
+                System.out.println("     No book record found.");
+                System.out.println("|                             |");
+                return;
+            }
             if(count==0) {
                 System.out.println("|                             |");
                 System.out.println("     No book record found.");
@@ -499,11 +536,19 @@ public class Database {
 
         try {
             //no record
-            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM order_details WHERE shipping_status = 'Ordered' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM order_details WHERE shipping_status = 'ordered' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet num = stmt.executeQuery();
-            num.next();
-            int count = num.getInt(1);
+            int count;
+            if(num.next()){
+            count = num.getInt(1);
+            }
+            else{
+                System.out.println("|                             |");
+                System.out.println("     No order record found.");
+                System.out.println("|                             |");
+                return;
+            }
             if(count==0) {
                 System.out.println("|                             |");
                 System.out.println("     No order record found.");
@@ -513,7 +558,7 @@ public class Database {
 
             System.out.println("Ordered Order Record:");
             System.out.println("|oid|Order Quantity|Order Date|");
-            stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE shipping_status = 'Shipped' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
+            stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE shipping_status = 'ordered' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet rs = stmt.executeQuery();
 
@@ -523,7 +568,7 @@ public class Database {
                 Timestamp orderTime;
 
                 //order quantity, order time
-                stmt = conn.prepareStatement("SELECT order_quantity, order_time FROM order_details WHERE oid = ?  AND shipping_status = 'Ordered' ORDER BY order_time DESC");
+                stmt = conn.prepareStatement("SELECT order_quantity, order_time FROM order_details WHERE oid = ?  AND shipping_status = 'ordered' ORDER BY order_time DESC");
                 stmt.setString(1, oid);
                 ResultSet rs2 = stmt.executeQuery();
                 rs2.next();
@@ -535,7 +580,7 @@ public class Database {
             }
             System.out.println("End of Query\n");
         } catch (SQLException e) {
-            System.out.println("[Error] Failed to list the records.\n");
+            System.out.println("[Error] Failed to list the records.\n"+e.getMessage());
         }
     }
 
@@ -543,21 +588,29 @@ public class Database {
 
         try {
             //no record
-            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM order_details WHERE shipping_status = 'Shipped' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM order_details WHERE shipping_status = 'shipped' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet num = stmt.executeQuery();
-            num.next();
-            int count = num.getInt(1);
+            int count;
+            if(num.next()){
+            count = num.getInt(1);
+            }
+            else{
+                System.out.println("|                             |");
+                System.out.println("     No order record found.");
+                System.out.println("|                             |");
+                return;
+            }
             if(count==0) {
-                System.out.println("|                                            |");
-                System.out.println("| No order record found or invalid user ID.  |");
-                System.out.println("|                                            |");
+                System.out.println("|                             |");
+                System.out.println("     No order record found.");
+                System.out.println("|                             |");
                 return;
             }
 
             System.out.println("Ordered Shipped Record:");
             System.out.println("|oid|Order Quantity|Order Time|");
-            stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE shipping_status = 'Shipped' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
+            stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE shipping_status = 'shipped' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet rs = stmt.executeQuery();
 
@@ -567,7 +620,7 @@ public class Database {
                 Timestamp orderTime;
 
                 //order quantity, order date
-                stmt = conn.prepareStatement("SELECT order_quantity, order_time FROM order_details WHERE oid = ?  AND shipping_status = 'Shipped' ORDER BY order_time DESC");
+                stmt = conn.prepareStatement("SELECT order_quantity, order_time FROM order_details WHERE oid = ?  AND shipping_status = 'shipped' ORDER BY order_time DESC");
                 stmt.setString(1, oid);
                 ResultSet rs2 = stmt.executeQuery();
                 rs2.next();
@@ -587,21 +640,29 @@ public class Database {
 
         try {
             //no record
-            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM order_details WHERE shipping_status = 'Received' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM order_details WHERE shipping_status = 'received' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet num = stmt.executeQuery();
-            num.next();
-            int count = num.getInt(1);
+            int count;
+            if(num.next()){
+            count = num.getInt(1);
+            }
+            else{
+                System.out.println("|                             |");
+                System.out.println("     No order record found.");
+                System.out.println("|                             |");
+                return;
+            }
             if(count==0) {
                 System.out.println("|                             |");
-                System.out.println("    No order record found.");
+                System.out.println("     No order record found.");
                 System.out.println("|                             |");
                 return;
             }
 
             System.out.println("Ordered Received Record:");
             System.out.println("|oid|Order Quantity|Order Time|");
-            stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE shipping_status = 'Received' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
+            stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE shipping_status = 'received' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet rs = stmt.executeQuery();
 
@@ -611,7 +672,7 @@ public class Database {
                 Timestamp orderTime;
 
                 //order quantity, ordeer date
-                stmt = conn.prepareStatement("SELECT order_quantity, order_time FROM order_details WHERE oid = ?  AND shipping_status = 'Received' ORDER BY order_time DESC");
+                stmt = conn.prepareStatement("SELECT order_quantity, order_time FROM order_details WHERE oid = ?  AND shipping_status = 'received' ORDER BY order_time DESC");
                 stmt.setString(1, oid);
                 ResultSet rs2 = stmt.executeQuery();
                 rs2.next();
@@ -634,9 +695,23 @@ public class Database {
             //no record
             PreparedStatement stmt = conn.prepareStatement("SELECT DISTINCT COUNT(isbn) FROM buy");
             ResultSet num = stmt.executeQuery();
-            num.next();
-            int count = num.getInt(1);
-            if(count==0||count<10) {
+            int count;
+            if(num.next()){
+            count = num.getInt(1);
+            }
+            else{
+                System.out.println("|                             |");
+                System.out.println("     No order record found.");
+                System.out.println("|                             |");
+                return;
+            }
+            if(count==0) {
+                System.out.println("|                             |");
+                System.out.println("     No order record found.");
+                System.out.println("|                             |");
+                return;
+            }
+            if(count<10) {
                 System.out.println("|                             |");
                 System.out.println("       Need More Data :(");
                 System.out.println("|                             |");
@@ -690,12 +765,19 @@ public class Database {
             PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(uid) FROM customer WHERE uid=?");
             stmt.setString(1,uid);
             ResultSet num = stmt.executeQuery();
-            num.next();
-            int count = num.getInt(1);
+            int count;
+            if(num.next()){
+            count = num.getInt(1);
+            }
+            else{
+                System.out.println("Fail. NO such user. Please try again");
+                return false;
+            }
             if(count==0) {
                 System.out.println("Fail. NO such user. Please try again");
                 return false;
-             }
+            }
+            
             return true;
         } catch (SQLException e) {
             System.out.println("[Error] Failed to verify user.\n");
@@ -708,25 +790,32 @@ public class Database {
             PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM `order` WHERE oid=?");
             stmt.setString(1,oid);
             ResultSet num = stmt.executeQuery();
-            num.next();
-            int count = num.getInt(1);
+            int count;
+            if(num.next()){
+            count = num.getInt(1);
+            }
+            else{
+                System.out.println("Fail. NO such order. Please try again");
+                return;
+            }
             if(count==0) {
                 System.out.println("Fail. NO such order. Please try again");
                 return;
-             }
+            }
+            
             stmt=conn.prepareStatement("SELECT shipping_status FROM order_details WHERE oid=?");
             stmt.setString(1,oid);
             ResultSet rs = stmt.executeQuery();
             rs.next();
             String status = rs.getString(1);
-            if(status.equals("Ordered")){
+            if(status.equals("ordered")){
                 System.out.println("Fail. Order hasn't been shipped yet.");
             }
-            else if(status.equals("Received")){
+            else if(status.equals("received")){
                 System.out.println("Fail. Order has been received.");
             }
             else{
-                stmt=conn.prepareStatement("UPDATE order_details SET shipping_status='Received' WHERE oid=?");
+                stmt=conn.prepareStatement("UPDATE order_details SET shipping_status='received' WHERE oid=?");
                 stmt.setString(1,oid);
                 stmt.executeUpdate();
                 System.out.println("Success. Order has been received.");
@@ -740,21 +829,28 @@ public class Database {
             PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM `order` WHERE oid=?");
             stmt.setString(1,oid);
             ResultSet num = stmt.executeQuery();
-            num.next();
-            int count = num.getInt(1);
+            int count;
+            if(num.next()){
+            count = num.getInt(1);
+            }
+            else{
+                System.out.println("Fail. NO such order. Please try again");
+                return;
+            }
             if(count==0) {
                 System.out.println("Fail. NO such order. Please try again");
                 return;
-             }
+            }
+            
             stmt=conn.prepareStatement("SELECT shipping_status FROM order_details WHERE oid=?");
             stmt.setString(1,oid);
             ResultSet rs = stmt.executeQuery();
             rs.next();
             String status = rs.getString(1);
-            if(status.equals("Shipped")){
+            if(status.equals("shipped")){
                 System.out.println("Fail. Order has been shipped.");
             }
-            else if(status.equals("Received")){
+            else if(status.equals("received")){
                 System.out.println("Fail. Order has been received.");
             }
             else{
@@ -765,9 +861,9 @@ public class Database {
                 Timestamp orderTime = rs.getTimestamp(1);
                 Timestamp currentTime = new Timestamp(System.currentTimeMillis());
                 long diff = currentTime.getTime() - orderTime.getTime();
-                long diffSeconds = diff / 1000 % 60;
+                long diffSeconds = diff / 1000;
                 if(diffSeconds>30){
-                stmt=conn.prepareStatement("UPDATE order_details SET shipping_status='Shipped' WHERE oid=?");
+                stmt=conn.prepareStatement("UPDATE order_details SET shipping_status='shipped' WHERE oid=?");
                 stmt.setString(1,oid);
                 stmt.execute();
                 System.out.println("Success. Order has been shipped.");}
