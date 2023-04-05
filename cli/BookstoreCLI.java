@@ -91,8 +91,36 @@ public class BookstoreCLI implements CLIInterface {
     }
 
     private void optOrderUpdate(){
+        while(true){
+            printSubMenu2();
+            int choice = sc.nextInt();
+            System.out.println();
+                switch (choice) {
+                    case 1: optToShipped(); break;
+                    case 2: optToReceived(); break;
+                    case 3: return;
+                    default: System.out.println("[Error] Invalid operation, choose again.\n");
+                }
+        }
+    }
+
+    private void printSubMenu2() {
+        System.out.println("-----Choose the STATUS of Order-----");
+        System.out.println(">1. Change Order to Shipped");
+        System.out.println(">2. Change Order to Received");
+        System.out.println(">3. Back to the bookstore operation menu");
+        System.out.printf("Please Enter Your Query: ");
+    }
+
+    private void optToShipped(){
         System.out.printf("Enter The Order ID: ");
         String orderID = sc.next();
-        db.optOrderUpdate(orderID);
+        db.optToShipped(orderID);
+    }
+
+    private void optToReceived(){
+        System.out.printf("Enter The Order ID: ");
+        String orderID = sc.next();
+        db.optToReceived(orderID);
     }
 }

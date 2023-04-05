@@ -702,7 +702,40 @@ public class Database {
             return false;
         }
     }
-    public void optOrderUpdate(String oid){
+    
+    public void optToReceived(String oid){
+        try{
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM `order` WHERE oid=?");
+            stmt.setString(1,oid);
+            ResultSet num = stmt.executeQuery();
+            num.next();
+            int count = num.getInt(1);
+            if(count==0) {
+                System.out.println("Fail. NO such order. Please try again");
+                return;
+             }
+            stmt=conn.prepareStatement("SELECT shipping_status FROM order_details WHERE oid=?");
+            stmt.setString(1,oid);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            String status = rs.getString(1);
+            if(status.equals("Ordered")){
+                System.out.println("Fail. Order hasn't been shipped yet.");
+            }
+            else if(status.equals("Received")){
+                System.out.println("Fail. Order has been received.");
+            }
+            else{
+                stmt=conn.prepareStatement("UPDATE order_details SET shipping_status='Received' WHERE oid=?");
+                stmt.setString(1,oid);
+                stmt.executeUpdate();
+                System.out.println("Success. Order has been received.");
+            }
+        } catch (SQLException e) {
+            System.out.println("[Error] Failed to verify user.\n");
+        }
+    }
+    public void optToShipped(String oid){
         try{
             PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(oid) FROM `order` WHERE oid=?");
             stmt.setString(1,oid);
