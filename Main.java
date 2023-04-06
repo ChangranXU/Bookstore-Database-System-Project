@@ -18,7 +18,6 @@ public class Main {
         }
 
         System.out.println("=====Welcome to Book ordering Management System=====");
-
         // Start the command line interface.
         MainCLI cli = new MainCLI(db);
         cli.startCLI();

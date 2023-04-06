@@ -11,10 +11,10 @@ public class book implements FileInputDBInterface {
     private double price;
 
     public void parseFromLine(String inputLine) {
-        String[] tokens = inputLine.split(",");
+        String[] tokens = inputLine.split(";");
         isbn = tokens[0];
         title = tokens[1];
-        authors = tokens[2].split(";");
+        authors = tokens[2].split(",");
         inventory_quantity = Integer.parseInt(tokens[3]);
         price = Double.parseDouble(tokens[4]);
     }

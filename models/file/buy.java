@@ -10,7 +10,7 @@ public class buy implements FileInputDBInterface{
     private int item_quantity;
     
     public void parseFromLine(String inputLine){
-        String[] tokens = inputLine.split(",");
+        String[] tokens = inputLine.split(";");
         uid = tokens[0];
         name = tokens[1];
         address = tokens[2];

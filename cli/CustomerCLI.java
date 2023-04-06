@@ -51,8 +51,16 @@ public class CustomerCLI implements CLIInterface {
         }
         System.out.printf("Enter the User Name: ");
         String userName = sc.next();
+        if(!models.utils.verifyInput.isLegalInput(userName)){
+            System.out.println("[Error] Contain _ or %, please remove them and try again.\n");
+            return;
+        }
         System.out.printf("Enter the User Address: ");
         String userAddress = sc.next();
+        if(!models.utils.verifyInput.isLegalInput(userAddress)){
+            System.out.println("[Error] Contain _ or %, please remove them and try again.\n");
+            return;
+        }
         db.createUser(userID, userName, userAddress);
     }
 
@@ -131,6 +139,10 @@ public class CustomerCLI implements CLIInterface {
     private void optSearchByTitle(){
         System.out.printf("Enter The Book Title: ");
         String title = sc.next();
+        if(!models.utils.verifyInput.isLegalInput(title)){
+            System.out.println("[Error] Contain _ or %, please remove them and try again.\n");
+            return;
+        }
         System.out.println("-------book list-------");
         db.searchBookListByTitle(title);
         System.out.println("-----------------------");
@@ -139,6 +151,10 @@ public class CustomerCLI implements CLIInterface {
     private void optSearchByAuthor(){
         System.out.printf("Enter The Book Author: ");
         String author = sc.next();
+        if(!models.utils.verifyInput.isLegalInput(author)){
+            System.out.println("[Error] Contain _ or %, please remove them and try again.\n");
+            return;
+        }
         System.out.println("--------book list-------");
         db.printBookListByAuthor(author);
         System.out.println("-----------------------");

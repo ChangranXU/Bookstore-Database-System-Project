@@ -12,7 +12,7 @@ public class order implements FileInputDBInterface {
     private Timestamp order_time;
 
     public void parseFromLine(String inputLine) {
-        String[] tokens = inputLine.split(",");
+        String[] tokens = inputLine.split(";");
         oid = tokens[0];
         uid = tokens[1];
         isbn = tokens[2];

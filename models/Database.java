@@ -3,7 +3,6 @@ package models;
 import java.sql.*;
 import java.io.*;
 import java.util.*;
-import java.util.UUID;
 import models.utils.verifyInput;
 
 
@@ -53,13 +52,13 @@ public class Database {
     //create tables
     public void createAllTables() throws SQLException{
         PreparedStatement[] stmts={
-            conn.prepareStatement("CREATE TABLE customer (uid VARCHAR(45) NOT NULL, name VARCHAR(45) NOT NULL, address VARCHAR(100) NOT NULL, PRIMARY KEY (uid))"),
-            conn.prepareStatement("CREATE TABLE book (isbn VARCHAR(45) NOT NULL, title VARCHAR(45) NOT NULL, price double NOT NULL, inventory_quantity int NOT NULL, PRIMARY KEY (isbn))"),
-            //conn.prepareStatement("CREATE TABLE item (isbn VARCHAR(45) NOT NULL, item_quantity int NOT NULL, PRIMARY KEY (isbn, item_quantity))"),
-            conn.prepareStatement("CREATE TABLE author (isbn VARCHAR(45) NOT NULL, author_name VARCHAR(45) NOT NULL, PRIMARY KEY (isbn, author_name))"),
-            conn.prepareStatement("CREATE TABLE order_details (oid VARCHAR(45) NOT NULL, order_time TIMESTAMP NOT NULL, order_quantity int NOT NULL, shipping_status VARCHAR(45) NOT NULL, PRIMARY KEY (oid))"),
+            conn.prepareStatement("CREATE TABLE customer (uid VARCHAR(10) NOT NULL, name VARCHAR(50) NOT NULL, address VARCHAR(200) NOT NULL, PRIMARY KEY (uid))"),
+            conn.prepareStatement("CREATE TABLE book (isbn VARCHAR(13) NOT NULL, title VARCHAR(100) NOT NULL, price double NOT NULL, inventory_quantity int NOT NULL, PRIMARY KEY (isbn))"),
+            //conn.prepareStatement("CREATE TABLE item (isbn VARCHAR(13) NOT NULL, item_quantity int NOT NULL, PRIMARY KEY (isbn, item_quantity))"),
+            conn.prepareStatement("CREATE TABLE author (isbn VARCHAR(13) NOT NULL, author_name VARCHAR(50) NOT NULL, PRIMARY KEY (isbn, author_name))"),
+            conn.prepareStatement("CREATE TABLE order_details (oid VARCHAR(8) NOT NULL, order_time TIMESTAMP NOT NULL, order_quantity int NOT NULL, shipping_status VARCHAR(45) NOT NULL, PRIMARY KEY (oid))"),
             conn.prepareStatement("CREATE TABLE buy (uid VARCHAR(45) NOT NULL, isbn VARCHAR(45) NOT NULL, item_quantity int NOT NULL, PRIMARY KEY (uid, isbn, item_quantity))"),
-            conn.prepareStatement("CREATE TABLE `order` (oid VARCHAR(45) NOT NULL, uid VARCHAR(45) NOT NULL, item_quantity int NOT NULL, isbn VARCHAR(45) NOT NULL, PRIMARY KEY (oid, uid, item_quantity, isbn))")
+            conn.prepareStatement("CREATE TABLE `order` (oid VARCHAR(8) NOT NULL, uid VARCHAR(10) NOT NULL, item_quantity int NOT NULL, isbn VARCHAR(13) NOT NULL, PRIMARY KEY (oid, uid, item_quantity, isbn))")
          };
         for (int i = 0; i < stmts.length; i++) {
             stmts[i].execute();
@@ -161,8 +160,11 @@ public class Database {
     }
     public void placeOrder(String userID, Scanner sc){
 
-        String s = UUID.randomUUID().toString(); 
-        String orderID=s.substring(0,8)+s.substring(9,13)+s.substring(14,18)+s.substring(19,23)+s.substring(24);
+        int hashCode = java.util.UUID.randomUUID().toString().hashCode();
+		if (hashCode <0){
+			hashCode=-hashCode;
+		}
+		String orderID = String.format("%08d", hashCode).substring(0,8);
         ArrayList<String> ISBNList=new ArrayList<String>();
         ArrayList<Integer> item_quantity=new ArrayList<Integer>();
 
