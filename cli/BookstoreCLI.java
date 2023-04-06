@@ -37,7 +37,7 @@ public class BookstoreCLI implements CLIInterface {
         System.out.println("-----Bookstore Operation-----");
         System.out.println(">1. Order Shipping Status Update");
         System.out.println(">2. Order Query");
-        System.out.println(">3. Most Popular Books");
+        System.out.println(">3. 10 Most Popular Books");
         System.out.println(">4. Back to the main menu");
         System.out.printf("Please Enter Your Query: ");
     }
@@ -75,21 +75,21 @@ public class BookstoreCLI implements CLIInterface {
     private void optOrderedOrder(){
         System.out.printf("Enter The User ID: ");
         String userID = sc.next();
-        System.out.println("---------------------------------Ordered Order---------------------------------");
+        System.out.println("-----------------------------Ordered Order-----------------------------");
         db.printOrderedOrder(userID);
     }
 
     private void optShippedOrder(){
         System.out.printf("Enter The User ID: ");
         String userID = sc.next();
-        System.out.println("---------------------------------Shipped Order---------------------------------");
+        System.out.println("-----------------------------Shipped Order--------------------------------");
         db.printShippedOrder(userID);
     }
 
     private void optReceivedOrder(){
         System.out.printf("Enter The User ID: ");
         String userID = sc.next();
-        System.out.println("---------------------------------Received Order---------------------------------");
+        System.out.println("-----------------------------Received Order-----------------------------");
         db.printReceivedOrder(userID);
     }
 

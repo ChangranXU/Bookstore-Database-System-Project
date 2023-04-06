@@ -347,6 +347,7 @@ public class Database {
             stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet rs = stmt.executeQuery();
+            int lengthcol2=10;
             while (rs.next()) {
                 String oid = rs.getString(1);
                 stmt = conn.prepareStatement("SELECT order_time, shipping_status  FROM order_details WHERE oid = ?");
@@ -369,14 +370,15 @@ public class Database {
                     rs4.next();
                     //System.out.println("At 315::isbn: "+isbn+" title: "+rs4.getString(1)+" item_quantity: "+item_quantity+" order_date: "+TimeConv.timeToStr(order_date)+" shipping_status: "+shipping_status);
                     String title = rs4.getString(1);
+                    if(title.length()>lengthcol2) lengthcol2=title.length();
                     history_orders.add(new history_order(oid, title, item_quantity, TimeConv.timeToStr(order_date), shipping_status));
                     //System.out.println("|"+oid+"|"+title+"|"+item_quantity+"|"+TimeConv.timeToStr(order_date)+"|"+shipping_status+"|");
                 }
             }
-            System.out.printf("%-10s %-40s %-15s %-15s %-15s", "oid", "Title", "Item Quantity", "Order Date", "Order Status");
+            System.out.printf("%-10s %-"+(lengthcol2+2)+"s %-15s %-15s %-15s", "oid", "Title", "Item Quantity", "Order Date", "Order Status");
             System.out.println();
             for(history_order order: history_orders){
-                System.out.printf("%-10s %-40s %-15s %-15s %-15s", order.oid, order.title, order.item_quantity, order.order_time, order.order_status);
+                System.out.printf("%-10s %-"+(lengthcol2+2)+"s %-15s %-15s %-15s", order.oid, order.title, order.item_quantity, order.order_time, order.order_status);
                 System.out.println();
             }
             System.out.println();
@@ -393,6 +395,8 @@ public class Database {
             stmt.setString(1, isbn);
             ResultSet num = stmt.executeQuery();
             int count;
+            int lengthtitile=10;
+            int lengthauthor=10;
             if(num.next()){
             count = num.getInt(1);
             }
@@ -412,93 +416,35 @@ public class Database {
             //print book record
             List<booklist> booklists = new ArrayList<>();
             //System.out.println("|ISBN|Title|Author|Price|Inventory Quantity|");
-            stmt = conn.prepareStatement("SELECT isbn, title, price, inventory_quantity FROM book WHERE isbn Like '%" + isbn + "%'");
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                String ISBN = rs.getString(1);
-                String title = rs.getString(2);
-                double price = rs.getDouble(3);
-                int inventory_quantity = rs.getInt(4);
-                stmt = conn.prepareStatement("SELECT author_name FROM author WHERE isbn = ?");
-                stmt.setString(1, ISBN);
-                ResultSet rs2 = stmt.executeQuery();
-                ArrayList<String> author =new ArrayList<String>();
-                while(rs2.next()){
-                    author.add(rs2.getString(1));
-                }
-                //System.out.printf("|"+ISBN+"|"+title+"|");
-                //for(int i=0;i<author.size();i++){
-                //    System.out.printf(author.get(i));
-                //    if(i!=author.size()-1) System.out.printf(",");
-                //}
-                //System.out.println("|"+price+"|"+inventory_quantity+"|");
-                booklists.add(new booklist(ISBN, title, author, price, inventory_quantity));
-            }
-            System.out.printf("%-20s %-30s %-25s %-10s %-10s", "ISBN", "Title", "Author", "Price", "Quantity");
-            System.out.println();
-            for(booklist book: booklists){
-                System.out.printf("%-20s %-30s %-25s %-10s %-10s", book.isbn, book.title, book.authors, book.price, book.inventory_quantity);
-                System.out.println();
-            }
-            System.out.println();
-        }
-        catch (Exception e) {
-            System.out.println("[Error]"+e.getMessage());
-        }
-    }
-
-    public void printBookByISBN(String isbn){
-        try {
-            //no record
-            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(isbn) FROM book WHERE isbn=?");
+            stmt = conn.prepareStatement("SELECT isbn, title, price, inventory_quantity FROM book WHERE isbn = ?");
             stmt.setString(1, isbn);
-            ResultSet num = stmt.executeQuery();
-            int count;
-            if(num.next()){
-            count = num.getInt(1);
-            }
-            else{
-                System.out.println();
-                System.out.println("     No book record found.");
-                System.out.println();
-                return;
-            }
-            if(count==0) {
-                System.out.println();
-                System.out.println("     No book record found.");
-                System.out.println();
-                return;
-            }
-
-            //print book record
-            List<booklist> booklists = new ArrayList<>();
-            //System.out.println("|ISBN|Title|Author|Price|Inventory Quantity|");
-            stmt = conn.prepareStatement("SELECT isbn, title, price, inventory_quantity FROM book WHERE isbn Like '%" + isbn + "%'");
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 String ISBN = rs.getString(1);
                 String title = rs.getString(2);
+                if(title.length()>lengthtitile) lengthtitile=title.length();
                 double price = rs.getDouble(3);
                 int inventory_quantity = rs.getInt(4);
                 stmt = conn.prepareStatement("SELECT author_name FROM author WHERE isbn = ?");
                 stmt.setString(1, ISBN);
                 ResultSet rs2 = stmt.executeQuery();
                 ArrayList<String> author =new ArrayList<String>();
+                int flag=0;
                 while(rs2.next()){
-                    author.add(rs2.getString(1));
+                    String author_name = rs2.getString(1);
+                    author.add(author_name);
+                    flag+=author_name.length()+1;
                 }
-                //System.out.printf("|"+ISBN+"|"+title+"|");
-                //for(int i=0;i<author.size();i++){
-                //    System.out.printf(author.get(i));
-                //    if(i!=author.size()-1) System.out.printf(",");
-                //}
-                //System.out.println("|"+price+"|"+inventory_quantity+"|");
+                if(flag>lengthauthor) lengthauthor=flag;
                 booklists.add(new booklist(ISBN, title, author, price, inventory_quantity));
             }
+            System.out.printf("%-20s %-"+(lengthtitile+2)+"s %-"+(lengthauthor+2)+"s %-10s %-10s", "ISBN", "Title", "Author", "Price", "Quantity");
+            System.out.println();
             for(booklist book: booklists){
-                System.out.printf("%-20s %-30s %-25s %-10s %-10s", book.isbn, book.title, book.authors, book.price, book.inventory_quantity);
+                System.out.printf("%-20s %-"+(lengthtitile+2)+"s %-"+(lengthauthor+2)+"s %-10s %-10s", book.isbn, book.title, book.authors, book.price, book.inventory_quantity);
                 System.out.println();
             }
+            System.out.println();
         }
         catch (Exception e) {
             System.out.println("[Error]"+e.getMessage());
@@ -512,6 +458,8 @@ public class Database {
             stmt.setString(1, title);
             ResultSet num = stmt.executeQuery();
             int count;
+            int lengthtitile=10;
+            int lengthauthor=10;
             if(num.next()){
             count = num.getInt(1);
             }
@@ -529,14 +477,40 @@ public class Database {
             }
 
             //print book record
+            List<booklist> booklists = new ArrayList<>();
             stmt = conn.prepareStatement("SELECT isbn FROM book WHERE title= ?");
             stmt.setString(1, title);
             ResultSet rs = stmt.executeQuery();
-            System.out.printf("%-20s %-30s %-25s %-10s %-10s", "ISBN", "Title", "Author", "Price", "Quantity");
-            System.out.println();
             while(rs.next()){
                 String isbn = rs.getString(1);
-                printBookByISBN(isbn);
+                stmt = conn.prepareStatement("SELECT isbn, title, price, inventory_quantity FROM book WHERE isbn = ?");
+                stmt.setString(1, isbn);
+                ResultSet rs_ = stmt.executeQuery();
+                while (rs_.next()) {
+                String ISBN = rs_.getString(1);
+                String title_ = rs_.getString(2);
+                if(title_.length()>lengthtitile) lengthtitile=title_.length();
+                double price = rs_.getDouble(3);
+                int inventory_quantity = rs_.getInt(4);
+                stmt = conn.prepareStatement("SELECT author_name FROM author WHERE isbn = ?");
+                stmt.setString(1, ISBN);
+                ResultSet rs2 = stmt.executeQuery();
+                ArrayList<String> author =new ArrayList<String>();
+                int flag=0;
+                while(rs2.next()){
+                    String author_name = rs2.getString(1);
+                    author.add(author_name);
+                    flag+=author_name.length()+1;
+                }
+                if(flag>lengthauthor) lengthauthor=flag;
+                booklists.add(new booklist(ISBN, title_, author, price, inventory_quantity));
+                }
+            }
+            System.out.printf("%-20s %-"+(lengthtitile+2)+"s %-"+(lengthauthor+2)+"s %-10s %-10s", "ISBN", "Title", "Author", "Price", "Quantity");
+            System.out.println();
+            for(booklist book: booklists){
+                System.out.printf("%-20s %-"+(lengthtitile+2)+"s %-"+(lengthauthor+2)+"s %-10s %-10s", book.isbn, book.title, book.authors, book.price, book.inventory_quantity);
+                System.out.println();
             }
             System.out.println();
         }
@@ -552,6 +526,8 @@ public class Database {
             stmt.setString(1, author);
             ResultSet num = stmt.executeQuery();
             int count;
+            int lengthtitile=10;
+            int lengthauthor=10;
             if(num.next()){
             count = num.getInt(1);
             }
@@ -569,14 +545,39 @@ public class Database {
             }
 
             //print book record
+            List<booklist> booklists = new ArrayList<>();
             stmt = conn.prepareStatement("SELECT DISTINCT(isbn) FROM author WHERE author_name = ?");
             stmt.setString(1, author);
             ResultSet rs = stmt.executeQuery();
-            System.out.printf("%-20s %-30s %-25s %-10s %-10s", "ISBN", "Title", "Author", "Price", "Quantity");
-            System.out.println();
             while(rs.next()){
                 String isbn = rs.getString(1);
-                printBookByISBN(isbn);
+                stmt = conn.prepareStatement("SELECT isbn, title, price, inventory_quantity FROM book WHERE isbn Like '%" + isbn + "%'");
+                ResultSet rs_ = stmt.executeQuery();
+                while (rs_.next()) {
+                String ISBN = rs_.getString(1);
+                String title_ = rs_.getString(2);
+                if(title_.length()>lengthtitile) lengthtitile=title_.length();
+                double price = rs_.getDouble(3);
+                int inventory_quantity = rs_.getInt(4);
+                stmt = conn.prepareStatement("SELECT author_name FROM author WHERE isbn = ?");
+                stmt.setString(1, ISBN);
+                ResultSet rs2 = stmt.executeQuery();
+                ArrayList<String> authors =new ArrayList<String>();
+                int flag=0;
+                while(rs2.next()){
+                    String author_name = rs2.getString(1);
+                    authors.add(author_name);
+                    flag+=author_name.length()+1;
+                }
+                if(flag>lengthauthor) lengthauthor=flag;
+                booklists.add(new booklist(ISBN, title_, authors, price, inventory_quantity));
+            }
+            }
+            System.out.printf("%-20s %-"+(lengthtitile+2)+"s %-"+(lengthauthor+2)+"s %-10s %-10s", "ISBN", "Title", "Author", "Price", "Quantity");
+            System.out.println();
+            for(booklist book: booklists){
+                System.out.printf("%-20s %-"+(lengthtitile+2)+"s %-"+(lengthauthor+2)+"s %-10s %-10s", book.isbn, book.title, book.authors, book.price, book.inventory_quantity);
+                System.out.println();
             }
             System.out.println();
         }
@@ -778,6 +779,8 @@ public class Database {
             PreparedStatement stmt = conn.prepareStatement("SELECT DISTINCT COUNT(isbn) FROM buy");
             ResultSet num = stmt.executeQuery();
             int count;
+            int titlelength=20;
+            int authorlength=20;
             if(num.next()){
             count = num.getInt(1);
             }
@@ -816,8 +819,14 @@ public class Database {
                 stmt = conn.prepareStatement("SELECT author_name FROM author WHERE isbn = ?");
                 stmt.setString(1, isbn);
                 ResultSet authorRS = stmt.executeQuery();
+                int flag=0;
                 while (authorRS.next()) {
-                    authors.add(authorRS.getString(1));
+                    String author = authorRS.getString(1);
+                    authors.add(author);
+                    flag+=author.length()+1;
+                }
+                if(flag>authorlength){
+                    authorlength=flag;
                 }
                 
                 stmt = conn.prepareStatement("SELECT title, price, inventory_quantity FROM book WHERE isbn=?");
@@ -825,24 +834,18 @@ public class Database {
                 ResultSet rs2 = stmt.executeQuery();
                 rs2.next();
                 title=rs2.getString(1);
+                if(title.length()>titlelength){
+                    titlelength=title.length();
+                }
                 price=rs2.getDouble(2);
                 inventory_quantity=rs2.getInt(3);
-
-                //print result
-                //System.out.printf("|" + frequency + "|" + isbn + "|");
-                //boolean first = true;
-                //for (String author : authors) {
-                //    System.out.printf(first ? author : ", " + author);
-                //    first = false;
-                //} 
-                //System.out.println("|" + title + "|"  +price + "|" + inventory_quantity + "|");
                 booklists.add(new toplist(frequency, isbn, title, authors, price, inventory_quantity));
             }
             //System.out.println("End of Query\n");
-            System.out.printf("%-10s %-18s %-45s %-35s %-10s %-15s", "Frequency", "ISBN", "Title", "Author", "Price", "Inventory Quantity");
+            System.out.printf("%-10s %-18s %-"+(titlelength+2)+"s %-"+(authorlength+2)+"s %-10s %-15s", "Frequency", "ISBN", "Title", "Author", "Price", "Inventory Quantity");
             System.out.println();
             for(toplist toplist: booklists){
-                System.out.printf("%-10s %-18s %-45s %-35s %-10s %-15s", toplist.lending_frequency, toplist.isbn, toplist.title, toplist.authors, toplist.price, toplist.inventory_quantity);
+                System.out.printf("%-10s %-18s %-"+(titlelength+2)+"s %-"+(authorlength+2)+"s %-10s %-15s", toplist.lending_frequency, toplist.isbn, toplist.title, toplist.authors, toplist.price, toplist.inventory_quantity);
                 System.out.println();
             }
             System.out.println();
