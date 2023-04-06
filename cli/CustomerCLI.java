@@ -82,7 +82,6 @@ public class CustomerCLI implements CLIInterface {
     }
 
     private void printMenu() {
-        System.out.println("warning: if you are not the registed customer, you are not allowed to place order or check history orders!!!\n");
         System.out.println("-----Customer Operation-----");
         System.out.println(">1. Book Search");
         System.out.println(">2. Place Order");
@@ -124,6 +123,7 @@ public class CustomerCLI implements CLIInterface {
 
 
     private void optPlaceOrder(){
+        System.out.println("\nwarning: if you are not the registed customer, you are not allowed to place order!!!\n");
         System.out.printf("Enter your User ID: ");
         String userID = sc.next();
         if(db.verifyUser(userID) == false){
@@ -134,23 +134,22 @@ public class CustomerCLI implements CLIInterface {
     }
 
     private void optCheckHistoryOrders(){
+        System.out.println("\nwarning: if you are not the registed customer, you are not allowed to check history orders!!!\n");
         System.out.printf("Enter The User ID: ");
         String userID = sc.next();
         if(db.verifyUser(userID) == false){
             System.out.println("[Error] login failed, return to the customer operation menu.");
             return;
         }
-        System.out.println("--------History Orders--------");
+        System.out.println("\n----------------------------------------History Orders----------------------------------------"); 
         db.printHistoryOrders(userID);
-        System.out.println("------------------------------");
     }
 
     private void optSearchByISBN(){
         System.out.printf("Enter The Book ISBN: ");
         String isbn = sc.next();
-        System.out.println("-------book list-------");
+        System.out.println("\n------------------------------------------Book  List------------------------------------------"); 
         db.printBookListByISBN(isbn);
-        System.out.println("-----------------------");
     }
 
     private void optSearchByTitle(){
@@ -160,9 +159,8 @@ public class CustomerCLI implements CLIInterface {
             System.out.println("[Error] Contain _ or %, please remove them and try again.\n");
             return;
         }
-        System.out.println("-------book list-------");
+        System.out.println("\n------------------------------------------Book  List------------------------------------------"); 
         db.searchBookListByTitle(title);
-        System.out.println("-----------------------");
     }
 
     private void optSearchByAuthor(){
@@ -172,8 +170,7 @@ public class CustomerCLI implements CLIInterface {
             System.out.println("[Error] Contain _ or %, please remove them and try again.\n");
             return;
         }
-        System.out.println("--------book list-------");
+        System.out.println("\n------------------------------------------Book  List------------------------------------------"); 
         db.printBookListByAuthor(author);
-        System.out.println("-----------------------");
     }
 }

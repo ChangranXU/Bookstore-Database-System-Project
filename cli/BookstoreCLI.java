@@ -75,31 +75,27 @@ public class BookstoreCLI implements CLIInterface {
     private void optOrderedOrder(){
         System.out.printf("Enter The User ID: ");
         String userID = sc.next();
-        System.out.println("-----Ordered Order-----");
+        System.out.println("---------------------------------Ordered Order---------------------------------");
         db.printOrderedOrder(userID);
-        System.out.println("-----------------------");
     }
 
     private void optShippedOrder(){
         System.out.printf("Enter The User ID: ");
         String userID = sc.next();
-        System.out.println("-----Shipped Order-----");
+        System.out.println("---------------------------------Shipped Order---------------------------------");
         db.printShippedOrder(userID);
-        System.out.println("-----------------------");
     }
 
     private void optReceivedOrder(){
         System.out.printf("Enter The User ID: ");
         String userID = sc.next();
-        System.out.println("-----Received Order-----");
+        System.out.println("---------------------------------Received Order---------------------------------");
         db.printReceivedOrder(userID);
-        System.out.println("-----------------------");
     }
 
     private void optPopularBook() {
-        System.out.println("-----Most Popular Books TOP 10-----");
+        System.out.println("------------------------------------Most Popular Books TOP 10------------------------------------");
         db.printMostPopularBooks();
-        System.out.println("-----------------------");
     }
 
     private void optOrderUpdate(){

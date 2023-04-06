@@ -184,7 +184,7 @@ public class Database {
                 break;
             }
             System.out.println("Got it, the book is:");
-            printBookByISBN(isbn);
+            printBookListByISBN(isbn);
             System.out.printf("Enter The Quantity You Like Order. Tpye '0' to finish: ");
             //check if the input is a positive integer
             String choice_ = sc.next();
@@ -231,56 +231,56 @@ public class Database {
             }
             rs1.close();
             
-            System.out.println("Order item Placed Successfull. Updating order table...");
+            //System.out.println("Order item Placed Successfull. Updating order table...");
             //check if order is in order table
             _stmt2.setString(1, isbn);
             _stmt2.setString(2, orderID);
             ResultSet rs = _stmt2.executeQuery();
             rs.next();
             if(rs.getInt(1)==0){
-                System.out.println("Order is not in order table, inserting it...");
+                //System.out.println("Order is not in order table, inserting it...");
                 stmt2.setString(1, orderID);
                 stmt2.setString(2, userID);
                 stmt2.setInt(3, quantity);
                 stmt2.setString(4, isbn);
                 stmt2.setInt(5, quantity);
                 stmt2.executeUpdate();
-                System.out.println("Order table inserted successfully.");
+                //System.out.println("Order table inserted successfully.");
             }
 
             rs.close();
             
     
-            System.out.println("Updating order_details table...");
+            //System.out.println("Updating order_details table...");
             stmt3.setString(1, orderID);
             ResultSet rs2 = stmt3.executeQuery();
             if(rs2.next()){
-                System.out.println("Order is in order_details table, updating it...");
+                //System.out.println("Order is in order_details table, updating it...");
                 stmt4.setInt(1, quantity);
                 stmt4.setString(2, orderID);
                 stmt4.executeUpdate();
-                System.out.println("Order_details table updated successfully.");
+                //System.out.println("Order_details table updated successfully.");
             }
             else{
-                System.out.println("Order is not in order_details table, inserting it...");
+                //System.out.println("Order is not in order_details table, inserting it...");
                 stmt5.setString(1, orderID);
                 stmt5.setTimestamp(2, timestamp);
                 stmt5.setInt(3, quantity);
                 stmt5.setString(4, "ordered");
 
                 stmt5.executeUpdate();
-                System.out.println("Order_details table inserted successfully.");
+                //System.out.println("Order_details table inserted successfully.");
             }
             rs2.close();
     
-            System.out.println("Updating book table...");
+            //System.out.println("Updating book table...");
             stmt6.setInt(1, quantity);
             stmt6.setString(2, isbn);
             stmt6.executeUpdate();
-            System.out.println("Book table updated successfully.");
+            //System.out.println("Book table updated successfully.");
             
             //insert or update buy table
-            System.out.println("Updating buy table...");
+            //System.out.println("Updating buy table...");
             //check if order is in buy table
             PreparedStatement stmt8 = conn.prepareStatement("SELECT * FROM buy WHERE uid = ?");
             stmt8.setString(1, userID);
@@ -288,7 +288,7 @@ public class Database {
             //search for isbn inside buy
             
             if(!rs3.next()){//if isbn is not in buy, insert it
-                System.out.println("Order is not in buy table, inserting it...");
+                //System.out.println("Order is not in buy table, inserting it...");
                 stmt7.setString(1, userID);
                 stmt7.setString(2, isbn);
                 stmt7.setInt(3, quantity);
@@ -297,18 +297,18 @@ public class Database {
             //if isbn is in buy, update it
             while(rs3.next()){
                 if(rs3.getString("isbn").equals(isbn)){
-                    System.out.println("Order is in buy table, updating it...");
+                    //System.out.println("Order is in buy table, updating it...");
                     PreparedStatement stmt9 = conn.prepareStatement("UPDATE buy SET item_quantity = item_quantity + ? WHERE uid = ? AND isbn = ?");
                     stmt9.setInt(1, quantity);
                     stmt9.setString(2, userID);
                     stmt9.setString(3, isbn);
                     stmt9.executeUpdate();
-                    System.out.println("Buy table updated successfully.");
+                    //System.out.println("Buy table updated successfully.");
                     return 0;
                 }
             }
             
-            System.out.println("Updating buy table successful.");
+            //System.out.println("Updating buy table successful.");
             return 0;
         }
         catch (Exception e) {
@@ -329,20 +329,21 @@ public class Database {
             count = num.getInt(1);
             }
             else{
-                System.out.println("|                             |");
+                System.out.println();
                 System.out.println("     No order record found.");
-                System.out.println("|                             |");
+                System.out.println();
                 return;
             }
             if(count==0) {
-                System.out.println("|                             |");
+                System.out.println();
                 System.out.println("     No order record found.");
-                System.out.println("|                             |");
+                System.out.println();
                 return;
             }
 
             //print order record
-            System.out.println("|oid|Title|Order Quantity|Order Date|Order Status|");
+            List<history_order> history_orders = new ArrayList<>();
+            //System.out.println("|oid|Title|Order Quantity|Order Date|Order Status|");
             stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet rs = stmt.executeQuery();
@@ -368,9 +369,17 @@ public class Database {
                     rs4.next();
                     //System.out.println("At 315::isbn: "+isbn+" title: "+rs4.getString(1)+" item_quantity: "+item_quantity+" order_date: "+TimeConv.timeToStr(order_date)+" shipping_status: "+shipping_status);
                     String title = rs4.getString(1);
-                    System.out.println("|"+oid+"|"+title+"|"+item_quantity+"|"+TimeConv.timeToStr(order_date)+"|"+shipping_status+"|");
+                    history_orders.add(new history_order(oid, title, item_quantity, TimeConv.timeToStr(order_date), shipping_status));
+                    //System.out.println("|"+oid+"|"+title+"|"+item_quantity+"|"+TimeConv.timeToStr(order_date)+"|"+shipping_status+"|");
                 }
             }
+            System.out.printf("%-10s %-40s %-15s %-15s %-15s", "oid", "Title", "Item Quantity", "Order Date", "Order Status");
+            System.out.println();
+            for(history_order order: history_orders){
+                System.out.printf("%-10s %-40s %-15s %-15s %-15s", order.oid, order.title, order.item_quantity, order.order_time, order.order_status);
+                System.out.println();
+            }
+            System.out.println();
         }
         catch (Exception e) {
             System.out.println("[Error]"+e.getMessage());
@@ -380,27 +389,29 @@ public class Database {
     public void printBookListByISBN(String isbn){
         try {
             //no record
-            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(isbn) FROM book WHERE isbn Like '%" + isbn + "%'");
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(isbn) FROM book WHERE isbn=?");
+            stmt.setString(1, isbn);
             ResultSet num = stmt.executeQuery();
             int count;
             if(num.next()){
             count = num.getInt(1);
             }
             else{
-                System.out.println("|                             |");
+                System.out.println();
                 System.out.println("     No book record found.");
-                System.out.println("|                             |");
+                System.out.println();
                 return;
             }
             if(count==0) {
-                System.out.println("|                             |");
+                System.out.println();
                 System.out.println("     No book record found.");
-                System.out.println("|                             |");
+                System.out.println();
                 return;
             }
 
             //print book record
-            System.out.println("|ISBN|Title|Author|Price|Inventory Quantity|");
+            List<booklist> booklists = new ArrayList<>();
+            //System.out.println("|ISBN|Title|Author|Price|Inventory Quantity|");
             stmt = conn.prepareStatement("SELECT isbn, title, price, inventory_quantity FROM book WHERE isbn Like '%" + isbn + "%'");
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -415,97 +426,57 @@ public class Database {
                 while(rs2.next()){
                     author.add(rs2.getString(1));
                 }
-                System.out.printf("|"+ISBN+"|"+title+"|");
-                for(int i=0;i<author.size();i++){
-                    System.out.printf(author.get(i));
-                    if(i!=author.size()-1) System.out.printf(",");
-                }
-                System.out.println("|"+price+"|"+inventory_quantity+"|");
+                //System.out.printf("|"+ISBN+"|"+title+"|");
+                //for(int i=0;i<author.size();i++){
+                //    System.out.printf(author.get(i));
+                //    if(i!=author.size()-1) System.out.printf(",");
+                //}
+                //System.out.println("|"+price+"|"+inventory_quantity+"|");
+                booklists.add(new booklist(ISBN, title, author, price, inventory_quantity));
             }
+            System.out.printf("%-20s %-30s %-25s %-10s %-10s", "ISBN", "Title", "Author", "Price", "Quantity");
+            System.out.println();
+            for(booklist book: booklists){
+                System.out.printf("%-20s %-30s %-25s %-10s %-10s", book.isbn, book.title, book.authors, book.price, book.inventory_quantity);
+                System.out.println();
+            }
+            System.out.println();
         }
         catch (Exception e) {
             System.out.println("[Error]"+e.getMessage());
         }
     }
-    public void printBookByISBN(String ISBN){
-        try {
-            //no record
-            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(isbn) FROM book WHERE isbn = ?");
-            stmt.setString(1, ISBN);
-            ResultSet num = stmt.executeQuery();
-            int count;
-            if(num.next()){
-            count = num.getInt(1);
-            }
-            else{
-                System.out.println("|                             |");
-                System.out.println("     No book record found.");
-                System.out.println("|                             |");
-                return;
-            }
-            if(count==0) {
-                System.out.println("|                             |");
-                System.out.println("     No book record found.");
-                System.out.println("|                             |");
-                return;
-            }
-
-            //print book record
-            System.out.println("|ISBN|Title|Author|Price|Inventory Quantity|");
-            stmt = conn.prepareStatement("SELECT isbn, title, price, inventory_quantity FROM book WHERE isbn = ?");
-            stmt.setString(1, ISBN);
-            ResultSet rs = stmt.executeQuery();
-            rs.next();
-            String isbn = rs.getString(1);
-            String title = rs.getString(2);
-            double price = rs.getDouble(3);
-            int inventory_quantity = rs.getInt(4);
-            stmt = conn.prepareStatement("SELECT author_name FROM author WHERE isbn = ?");
-            stmt.setString(1, isbn);
-            ResultSet rs2 = stmt.executeQuery();
-            ArrayList<String> author =new ArrayList<String>();
-            while(rs2.next()){
-                author.add(rs2.getString(1));
-            }
-            System.out.printf("|"+isbn+"|"+title+"|");
-            for(int i=0;i<author.size();i++){
-                System.out.printf(author.get(i));
-                if(i!=author.size()-1) System.out.printf(",");
-            }
-            System.out.println("|"+price+"|"+inventory_quantity+"|");
-        }
-        catch (Exception e) {
-            System.out.println("[Error]"+e.getMessage());
-        }
-    }
+  
     public void searchBookListByTitle(String title){
         try {
             //no record
-            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(isbn) FROM book WHERE title Like '%" + title + "%'");
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(isbn) FROM book WHERE title= ?");
+            stmt.setString(1, title);
             ResultSet num = stmt.executeQuery();
             int count;
             if(num.next()){
             count = num.getInt(1);
             }
             else{
-                System.out.println("|                             |");
+                System.out.println();
                 System.out.println("     No book record found.");
-                System.out.println("|                             |");
+                System.out.println();
                 return;
             }
             if(count==0) {
-                System.out.println("|                             |");
+                System.out.println();
                 System.out.println("     No book record found.");
-                System.out.println("|                             |");
+                System.out.println();
                 return;
             }
 
             //print book record
-            stmt = conn.prepareStatement("SELECT isbn FROM book WHERE title Like '%" + title + "%'");
+            stmt = conn.prepareStatement("SELECT isbn FROM book WHERE title= ?");
+            stmt.setString(1, title);
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
                 String isbn = rs.getString(1);
-                printBookByISBN(isbn);
+                printBookListByISBN(isbn);
             }
         }
         catch (Exception e) {
@@ -516,31 +487,33 @@ public class Database {
     public void printBookListByAuthor(String author){
         try {
             //no record
-            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(isbn) FROM author WHERE author_name LIKE '%" + author + "%'");
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(isbn) FROM author WHERE author_name= ?");
+            stmt.setString(1, author);
             ResultSet num = stmt.executeQuery();
             int count;
             if(num.next()){
             count = num.getInt(1);
             }
             else{
-                System.out.println("|                             |");
+                System.out.println();
                 System.out.println("     No book record found.");
-                System.out.println("|                             |");
+                System.out.println();
                 return;
             }
             if(count==0) {
-                System.out.println("|                             |");
+                System.out.println();
                 System.out.println("     No book record found.");
-                System.out.println("|                             |");
+                System.out.println();
                 return;
             }
 
             //print book record
-            stmt = conn.prepareStatement("SELECT DISTINCT(isbn) FROM author WHERE author_name LIKE '%" + author + "%'");
+            stmt = conn.prepareStatement("SELECT DISTINCT(isbn) FROM author WHERE author_name = ?");
+            stmt.setString(1, author);
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
                 String isbn = rs.getString(1);
-                printBookByISBN(isbn);
+                printBookListByISBN(isbn);
             }
         }
         catch (Exception e) {
@@ -561,20 +534,21 @@ public class Database {
             count = num.getInt(1);
             }
             else{
-                System.out.println("|                             |");
+                System.out.println();
                 System.out.println("     No order record found.");
-                System.out.println("|                             |");
+                System.out.println();
                 return;
             }
             if(count==0) {
-                System.out.println("|                             |");
+                System.out.println();
                 System.out.println("     No order record found.");
-                System.out.println("|                             |");
+                System.out.println();
                 return;
             }
 
-            System.out.println("Ordered Order Record:");
-            System.out.println("|oid|Order Quantity|Order Date|");
+            //System.out.println("Ordered Order Record:");
+            //System.out.println("|oid|Order Quantity|Order Date|");
+            List<orderlist> orderlists = new ArrayList<orderlist>();
             stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE shipping_status = 'ordered' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet rs = stmt.executeQuery();
@@ -593,9 +567,17 @@ public class Database {
                 orderTime=rs2.getTimestamp(2);
 
                 //print result
-                System.out.println("|" + oid + "|" + orderQuantity + "|" + TimeConv.timeToStr(orderTime) + "|");
+                //System.out.println("|" + oid + "|" + orderQuantity + "|" + TimeConv.timeToStr(orderTime) + "|");
+                orderlists.add(new orderlist(oid, orderQuantity, TimeConv.timeToStr(orderTime)));
             }
-            System.out.println("End of Query\n");
+            System.out.printf("%-20s %-20s %-20s", "Order ID", "Order Quantity", "Order Date");
+            System.out.println();
+            for(orderlist orderlist: orderlists){
+                System.out.printf("%-20s %-20s %-20s", orderlist.oid, orderlist.order_quantity, orderlist.order_time);
+                System.out.println();
+            }
+            System.out.println();
+            //System.out.println("End of Query\n");
         } catch (SQLException e) {
             System.out.println("[Error] Failed to list the records.\n"+e.getMessage());
         }
@@ -613,20 +595,21 @@ public class Database {
             count = num.getInt(1);
             }
             else{
-                System.out.println("|                             |");
+                System.out.println();
                 System.out.println("     No order record found.");
-                System.out.println("|                             |");
+                System.out.println();
                 return;
             }
             if(count==0) {
-                System.out.println("|                             |");
+                System.out.println();
                 System.out.println("     No order record found.");
-                System.out.println("|                             |");
+                System.out.println();
                 return;
             }
 
-            System.out.println("Ordered Shipped Record:");
-            System.out.println("|oid|Order Quantity|Order Time|");
+            //System.out.println("Ordered Shipped Record:");
+            //System.out.println("|oid|Order Quantity|Order Time|");
+            List<orderlist> orderlists = new ArrayList<orderlist>();
             stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE shipping_status = 'shipped' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet rs = stmt.executeQuery();
@@ -645,9 +628,18 @@ public class Database {
                 orderTime=rs2.getTimestamp(2);
 
                 //print result
-                System.out.println("|" + oid + "|" + orderQuantity + "|" + TimeConv.timeToStr(orderTime) + "|");
+                //System.out.println("|" + oid + "|" + orderQuantity + "|" + TimeConv.timeToStr(orderTime) + "|");
+                orderlists.add(new orderlist(oid, orderQuantity, TimeConv.timeToStr(orderTime)));
             }
-            System.out.println("End of Query\n");
+            //System.out.println("End of Query\n");
+            System.out.printf("%-20s %-20s %-20s", "Order ID", "Order Quantity", "Order Date");
+            System.out.println();
+            for(orderlist orderlist: orderlists){
+                System.out.printf("%-20s %-20s %-20s", orderlist.oid, orderlist.order_quantity, orderlist.order_time);
+                System.out.println();
+            }
+            System.out.println();
+
         } catch (SQLException e) {
             System.out.println("[Error] Failed to list the records.\n");
         }
@@ -665,20 +657,21 @@ public class Database {
             count = num.getInt(1);
             }
             else{
-                System.out.println("|                             |");
+                System.out.println();
                 System.out.println("     No order record found.");
-                System.out.println("|                             |");
+                System.out.println();
                 return;
             }
             if(count==0) {
-                System.out.println("|                             |");
+                System.out.println();
                 System.out.println("     No order record found.");
-                System.out.println("|                             |");
+                System.out.println();
                 return;
             }
 
-            System.out.println("Ordered Received Record:");
-            System.out.println("|oid|Order Quantity|Order Time|");
+            //System.out.println("Ordered Received Record:");
+            //System.out.println("|oid|Order Quantity|Order Time|");
+            List<orderlist> orderlists = new ArrayList<orderlist>();
             stmt = conn.prepareStatement("SELECT oid FROM order_details WHERE shipping_status = 'received' AND oid in (SELECT DISTINCT oid FROM `order` WHERE uid =?)");
             stmt.setString(1, userID);
             ResultSet rs = stmt.executeQuery();
@@ -697,9 +690,17 @@ public class Database {
                 orderTime=rs2.getTimestamp(2);
 
                 //print result
-                System.out.println("|" + oid + "|" + orderQuantity + "|" + TimeConv.timeToStr(orderTime) + "|");
+                orderlists.add(new orderlist(oid, orderQuantity, TimeConv.timeToStr(orderTime)));
+                //System.out.println("|" + oid + "|" + orderQuantity + "|" + TimeConv.timeToStr(orderTime) + "|");
             }
-            System.out.println("End of Query\n");
+            //System.out.println("End of Query\n");
+            System.out.printf("%-20s %-20s %-20s", "Order ID", "Order Quantity", "Order Date");
+            System.out.println();
+            for(orderlist orderlist: orderlists){
+                System.out.printf("%-20s %-20s %-20s", orderlist.oid, orderlist.order_quantity, orderlist.order_time);
+                System.out.println();
+            }
+            System.out.println();
         } catch (SQLException e) {
             System.out.println("[Error] Failed to list the records.\n");
         }
@@ -717,15 +718,15 @@ public class Database {
             count = num.getInt(1);
             }
             else{
-                System.out.println("|                             |");
+                System.out.println();
                 System.out.println("     No order record found.");
-                System.out.println("|                             |");
+                System.out.println();
                 return;
             }
             if(count==0) {
-                System.out.println("|                             |");
+                System.out.println();
                 System.out.println("     No order record found.");
-                System.out.println("|                             |");
+                System.out.println();
                 return;
             }
             if(count<10) {
@@ -735,7 +736,8 @@ public class Database {
                 return;
             }
 
-            System.out.println("|Lending frequency|isbn|Title|Author|Price|Inventory Quantity|");
+            List<toplist> booklists = new ArrayList<toplist>();
+            //System.out.println("|Lending frequency|isbn|Title|Author|Price|Inventory Quantity|");
             stmt = conn.prepareStatement("SELECT SUM(item_quantity), isbn FROM buy GROUP BY isbn ORDER BY SUM(item_quantity) DESC LIMIT 10");
             ResultSet rs = stmt.executeQuery();
 
@@ -763,15 +765,23 @@ public class Database {
                 inventory_quantity=rs2.getInt(3);
 
                 //print result
-                System.out.printf("|" + frequency + "|" + isbn + "|");
-                boolean first = true;
-                for (String author : authors) {
-                    System.out.printf(first ? author : ", " + author);
-                    first = false;
-                } 
-                System.out.println("|" + title + "|"  +price + "|" + inventory_quantity + "|");
+                //System.out.printf("|" + frequency + "|" + isbn + "|");
+                //boolean first = true;
+                //for (String author : authors) {
+                //    System.out.printf(first ? author : ", " + author);
+                //    first = false;
+                //} 
+                //System.out.println("|" + title + "|"  +price + "|" + inventory_quantity + "|");
+                booklists.add(new toplist(frequency, isbn, title, authors, price, inventory_quantity));
             }
-            System.out.println("End of Query\n");
+            //System.out.println("End of Query\n");
+            System.out.printf("%-10s %-18s %-45s %-35s %-10s %-15s", "Frequency", "ISBN", "Title", "Author", "Price", "Inventory Quantity");
+            System.out.println();
+            for(toplist toplist: booklists){
+                System.out.printf("%-10s %-18s %-45s %-35s %-10s %-15s", toplist.lending_frequency, toplist.isbn, toplist.title, toplist.authors, toplist.price, toplist.inventory_quantity);
+                System.out.println();
+            }
+            System.out.println();
         } catch (SQLException e) {
             System.out.println("[Error] Failed to list the books.\n");
         }
