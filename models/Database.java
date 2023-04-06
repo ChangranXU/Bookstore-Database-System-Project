@@ -446,6 +446,64 @@ public class Database {
             System.out.println("[Error]"+e.getMessage());
         }
     }
+
+    public void printBookByISBN(String isbn){
+        try {
+            //no record
+            PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(isbn) FROM book WHERE isbn=?");
+            stmt.setString(1, isbn);
+            ResultSet num = stmt.executeQuery();
+            int count;
+            if(num.next()){
+            count = num.getInt(1);
+            }
+            else{
+                System.out.println();
+                System.out.println("     No book record found.");
+                System.out.println();
+                return;
+            }
+            if(count==0) {
+                System.out.println();
+                System.out.println("     No book record found.");
+                System.out.println();
+                return;
+            }
+
+            //print book record
+            List<booklist> booklists = new ArrayList<>();
+            //System.out.println("|ISBN|Title|Author|Price|Inventory Quantity|");
+            stmt = conn.prepareStatement("SELECT isbn, title, price, inventory_quantity FROM book WHERE isbn Like '%" + isbn + "%'");
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String ISBN = rs.getString(1);
+                String title = rs.getString(2);
+                double price = rs.getDouble(3);
+                int inventory_quantity = rs.getInt(4);
+                stmt = conn.prepareStatement("SELECT author_name FROM author WHERE isbn = ?");
+                stmt.setString(1, ISBN);
+                ResultSet rs2 = stmt.executeQuery();
+                ArrayList<String> author =new ArrayList<String>();
+                while(rs2.next()){
+                    author.add(rs2.getString(1));
+                }
+                //System.out.printf("|"+ISBN+"|"+title+"|");
+                //for(int i=0;i<author.size();i++){
+                //    System.out.printf(author.get(i));
+                //    if(i!=author.size()-1) System.out.printf(",");
+                //}
+                //System.out.println("|"+price+"|"+inventory_quantity+"|");
+                booklists.add(new booklist(ISBN, title, author, price, inventory_quantity));
+            }
+            for(booklist book: booklists){
+                System.out.printf("%-20s %-30s %-25s %-10s %-10s", book.isbn, book.title, book.authors, book.price, book.inventory_quantity);
+                System.out.println();
+            }
+        }
+        catch (Exception e) {
+            System.out.println("[Error]"+e.getMessage());
+        }
+    }
   
     public void searchBookListByTitle(String title){
         try {
@@ -474,10 +532,13 @@ public class Database {
             stmt = conn.prepareStatement("SELECT isbn FROM book WHERE title= ?");
             stmt.setString(1, title);
             ResultSet rs = stmt.executeQuery();
+            System.out.printf("%-20s %-30s %-25s %-10s %-10s", "ISBN", "Title", "Author", "Price", "Quantity");
+            System.out.println();
             while(rs.next()){
                 String isbn = rs.getString(1);
-                printBookListByISBN(isbn);
+                printBookByISBN(isbn);
             }
+            System.out.println();
         }
         catch (Exception e) {
             System.out.println("[Error]"+e.getMessage());
@@ -511,10 +572,13 @@ public class Database {
             stmt = conn.prepareStatement("SELECT DISTINCT(isbn) FROM author WHERE author_name = ?");
             stmt.setString(1, author);
             ResultSet rs = stmt.executeQuery();
+            System.out.printf("%-20s %-30s %-25s %-10s %-10s", "ISBN", "Title", "Author", "Price", "Quantity");
+            System.out.println();
             while(rs.next()){
                 String isbn = rs.getString(1);
-                printBookListByISBN(isbn);
+                printBookByISBN(isbn);
             }
+            System.out.println();
         }
         catch (Exception e) {
             System.out.println("[Error]"+e.getMessage());
