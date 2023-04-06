@@ -35,8 +35,13 @@ public class CustomerCLI implements CLIInterface {
     }
 
     private void optCreateUser(){
+        System.out.println("-----Create Account-----");
         System.out.printf("Enter the User ID: ");
         String userID = sc.next();
+        if(!models.utils.verifyInput.isValidUid(userID)){
+            System.out.println("[Error] UID length should less than 10, return to the customer operation menu.");
+            return;
+        }
         while(db.CreateverifyUser(userID) == true){
             System.out.println("[Error] Sorry the ID has already been occupied. Use a different name and try again.");
             System.out.println("Want to go back to the customer operation menu? (y/n) ");
@@ -47,16 +52,28 @@ public class CustomerCLI implements CLIInterface {
             else{
                 System.out.printf("Enter the User ID: ");
                 userID = sc.next();
+                if(!models.utils.verifyInput.isValidUid(userID)){
+                    System.out.println("[Error] UID length should less than 10, return to the customer operation menu.");
+                    return;
+                }
             }
         }
         System.out.printf("Enter the User Name: ");
         String userName = sc.next();
+        if(!models.utils.verifyInput.isValidName(userName)){
+            System.out.println("[Error] User name length should less than 50, return to the customer operation menu.");
+            return;
+        }
         if(!models.utils.verifyInput.isLegalInput(userName)){
             System.out.println("[Error] Contain _ or %, please remove them and try again.\n");
             return;
         }
         System.out.printf("Enter the User Address: ");
         String userAddress = sc.next();
+        if(!models.utils.verifyInput.isValidAddress(userAddress)){
+            System.out.println("[Error] Address length should less than 200. return to the customer operation menu.\n");
+            return;
+        }
         if(!models.utils.verifyInput.isLegalInput(userAddress)){
             System.out.println("[Error] Contain _ or %, please remove them and try again.\n");
             return;
@@ -65,7 +82,7 @@ public class CustomerCLI implements CLIInterface {
     }
 
     private void printMenu() {
-        System.out.println("warning: if you are not the registed customer, you are not allowed to place order or check history orders!!!");
+        System.out.println("warning: if you are not the registed customer, you are not allowed to place order or check history orders!!!\n");
         System.out.println("-----Customer Operation-----");
         System.out.println(">1. Book Search");
         System.out.println(">2. Place Order");
