@@ -203,7 +203,7 @@ public class Database {
             item_quantity.add(quantity);
         }
         
-        System.out.println("-----------------------");
+        System.out.println("SUCCESS!!");
     }
 
     public int placeOrderUtil(String userID, String orderID, String isbn, int quantity, Timestamp timestamp){
@@ -861,11 +861,11 @@ public class Database {
             count = num.getInt(1);
             }
             else{
-                System.out.println("Fail. NO such user. Please try again");
+                System.out.println("Fail. NO such user. Please try again\n");
                 return false;
             }
             if(count==0) {
-                System.out.println("Fail. NO such user. Please try again");
+                System.out.println("Fail. NO such user. Please try again\n");
                 return false;
             }
             
@@ -886,11 +886,11 @@ public class Database {
             count = num.getInt(1);
             }
             else{
-                System.out.println("Fail. NO such order. Please try again");
+                System.out.println("Fail. NO such order. Please try again\n");
                 return;
             }
             if(count==0) {
-                System.out.println("Fail. NO such order. Please try again");
+                System.out.println("Fail. NO such order. Please try again\n");
                 return;
             }
             
@@ -900,16 +900,16 @@ public class Database {
             rs.next();
             String status = rs.getString(1);
             if(status.equals("ordered")){
-                System.out.println("Fail. Order hasn't been shipped yet.");
+                System.out.println("Fail. Order hasn't been shipped yet.\n");
             }
             else if(status.equals("received")){
-                System.out.println("Fail. Order has been received.");
+                System.out.println("Fail. Order has been received.\n");
             }
             else{
                 stmt=conn.prepareStatement("UPDATE order_details SET shipping_status='received' WHERE oid=?");
                 stmt.setString(1,oid);
                 stmt.executeUpdate();
-                System.out.println("Success. Order has been received.");
+                System.out.println("Success. Order has been received.\n");
             }
         } catch (SQLException e) {
             System.out.println("[Error] Failed to verify user.\n");
@@ -925,11 +925,11 @@ public class Database {
             count = num.getInt(1);
             }
             else{
-                System.out.println("Fail. NO such order. Please try again");
+                System.out.println("Fail. NO such order. Please try again\n");
                 return;
             }
             if(count==0) {
-                System.out.println("Fail. NO such order. Please try again");
+                System.out.println("Fail. NO such order. Please try again\n");
                 return;
             }
             
@@ -957,9 +957,9 @@ public class Database {
                 stmt=conn.prepareStatement("UPDATE order_details SET shipping_status='shipped' WHERE oid=?");
                 stmt.setString(1,oid);
                 stmt.execute();
-                System.out.println("Success. Order has been shipped.");}
+                System.out.println("Success. Order has been shipped.\n");}
                 else{
-                    System.out.println("Fail. Order has not been ordered for 30 seconds.");
+                    System.out.println("Fail. Order has not been ordered for 30 seconds.\n");
                 }
             }
 

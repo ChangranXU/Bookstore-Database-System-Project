@@ -113,7 +113,7 @@ public class CustomerCLI implements CLIInterface {
     }
 
     private void printSubMenu1() {
-        System.out.println("-----Choose the Grouped Order-----");
+        System.out.println("-----Choose the Search Method-----");
         System.out.println(">1. Search by ISBN");
         System.out.println(">2. Search by Title");
         System.out.println(">3. Search by Author");
@@ -153,8 +153,9 @@ public class CustomerCLI implements CLIInterface {
     }
 
     private void optSearchByTitle(){
+        String title = sc.nextLine();
         System.out.printf("Enter The Book Title: ");
-        String title = sc.next();
+        title = sc.nextLine();
         if(!models.utils.verifyInput.isLegalInput(title)){
             System.out.println("[Error] Contain _ or %, please remove them and try again.\n");
             return;
@@ -164,8 +165,9 @@ public class CustomerCLI implements CLIInterface {
     }
 
     private void optSearchByAuthor(){
+        String author = sc.nextLine();
         System.out.printf("Enter The Book Author: ");
-        String author = sc.next();
+        author = sc.nextLine();
         if(!models.utils.verifyInput.isLegalInput(author)){
             System.out.println("[Error] Contain _ or %, please remove them and try again.\n");
             return;
